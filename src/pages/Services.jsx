@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Code, Smartphone, Cloud, Shield, Database, Server, ArrowRight, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
+import { API_BASE_URL } from '../config/api.config';
 
 // Icon mapping helper with premium styling
 const IconHelper = ({ name, className }) => {
@@ -24,7 +25,7 @@ const Services = () => {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const response = await fetch('/api/services');
+        const response = await fetch(`${API_BASE_URL}/api/services`);
         const result = await response.json();
         
         if (result.success) {

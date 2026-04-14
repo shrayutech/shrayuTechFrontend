@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import { toast } from 'react-toastify';
 import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import SEO from '../components/SEO';
+import { API_BASE_URL } from '../config/api.config';
 
 const ContactForm = () => {
   const { executeRecaptcha } = useGoogleReCaptcha();
@@ -46,7 +47,7 @@ const ContactForm = () => {
         }
 
         // 2. Submit to backend
-        const response = await fetch('/api/contact', {
+        const response = await fetch(`${API_BASE_URL}/api/contact`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
