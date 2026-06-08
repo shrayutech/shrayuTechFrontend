@@ -63,7 +63,9 @@ const Services = () => {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-20">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">Our Expertise</h1>
+          <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">
+            Our Software Development <span className="text-blue-600">Expertise</span>
+          </h1>
           <p className="text-xl text-slate-600 leading-relaxed font-light">
             We deliver exceptional software engineering and consulting services to help enterprises innovate, scale, and succeed in a digital-first world.
           </p>
@@ -137,7 +139,7 @@ const Services = () => {
                <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-blue-600 rounded-full blur-[100px] opacity-20"></div>
                <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-indigo-600 rounded-full blur-[100px] opacity-20"></div>
                
-               <h2 className="text-3xl md:text-4xl font-bold mb-6 relative z-10">Ready to start your digital journey?</h2>
+               <h2 className="text-3xl md:text-4xl font-bold mb-6 relative z-10">Ready to Start Your Custom Software Journey?</h2>
                <p className="text-slate-400 text-lg mb-10 max-w-2xl mx-auto relative z-10">
                  Our technical architects are standing by to help you map out your next enterprise solution.
                </p>

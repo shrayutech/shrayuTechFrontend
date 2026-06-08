@@ -120,7 +120,7 @@ const Products = () => {
         </div>
 
         <h1 className="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-300">
-          Coming Soon
+          Software Products Coming Soon
         </h1>
 
         <p className="text-xl md:text-2xl text-slate-400 leading-relaxed font-light mb-12">

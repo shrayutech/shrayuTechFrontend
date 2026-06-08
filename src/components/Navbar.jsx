@@ -1,5 +1,5 @@
 import { Link, NavLink } from 'react-router-dom';
-import { Menu, X, Code2 } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { useState } from 'react';
 
 const Navbar = () => {
@@ -20,8 +20,8 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <Link to="/" className="flex items-center space-x-2 group">
-              <div className="bg-blue-600 p-2 rounded-lg group-hover:bg-blue-700 transition-colors">
-                <Code2 className="h-6 w-6 text-white" />
+              <div className="w-10 h-10 flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                <img src="/logo.png" alt="Shrayu Technologies Logo" className="w-full h-full object-contain" />
               </div>
               <span className="font-bold text-xl text-slate-900 tracking-tight">Shrayu Technologies</span>
             </Link>

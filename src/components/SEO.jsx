@@ -5,7 +5,7 @@ const SEO = ({
   description, 
   keywords, 
   image = '/og-image.jpg', 
-  url = 'https://shrayu-technologies.com',
+  url = 'https://shrayutech.vercel.app',
   type = 'website' 
 }) => {
   const siteName = 'Shrayu Technologies';

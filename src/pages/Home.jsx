@@ -21,7 +21,7 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
             <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 leading-tight">
-              We Build <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Digital Reality</span>
+              We Build <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">Digital Reality</span> with Premium Software Development
             </h1>
             <p className="text-xl md:text-2xl text-blue-100 mb-10 leading-relaxed font-light">
               Premium software engineering services and cutting-edge products designed to accelerate your business growth.
@@ -43,7 +43,7 @@ const Home = () => {
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Our Expertise</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Our Software Development Expertise</h2>
             <p className="text-lg text-slate-600">Enterprise-grade solutions tailored to your unique business challenges across every platform.</p>
           </div>
 
@@ -165,7 +165,7 @@ const Home = () => {
 
             <div className="relative z-20">
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-6 tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-200">
-                Ready to Transform Your Ideas?
+                Ready to Build Your Custom Software?
               </h2>
               <p className="text-xl md:text-2xl text-slate-300 mb-12 max-w-3xl mx-auto font-light leading-relaxed">
                 Join innovative companies that trust us to deliver exceptional software solutions on time and on budget.
