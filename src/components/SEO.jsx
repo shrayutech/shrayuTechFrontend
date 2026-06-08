@@ -9,7 +9,7 @@ const SEO = ({
   type = 'website' 
 }) => {
   const siteName = 'Shrayu Technologies';
-  const fullTitle = title ? `${title} | ${siteName}` : siteName;
+  const fullTitle = title && title !== 'Home' ? `${title} | ${siteName}` : 'Shrayu Technologies | Premium Software Development & Custom Web Design';
 
   return (
     <Helmet>
