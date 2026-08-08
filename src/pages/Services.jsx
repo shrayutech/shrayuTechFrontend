@@ -1,158 +1,216 @@
-import { useState, useEffect } from 'react';
-import { Code, Smartphone, Cloud, Shield, Database, Server, ArrowRight, ExternalLink } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
+import {
+  Code,
+  Globe,
+  Smartphone,
+  Cpu,
+  Cloud,
+  Palette,
+  Network,
+  Layers,
+  Settings,
+  ArrowRight,
+  CheckCircle2,
+  Sparkles
+} from 'lucide-react';
 import SEO from '../components/SEO';
-import { API_BASE_URL } from '../config/api.config';
-
-// Icon mapping helper with premium styling
-const IconHelper = ({ name, className }) => {
-  const icons = {
-    Code: <Code className={className} />,
-    Smartphone: <Smartphone className={className} />,
-    Cloud: <Cloud className={className} />,
-    Shield: <Shield className={className} />,
-    Database: <Database className={className} />,
-    Server: <Server className={className} />
-  };
-  return icons[name] || <Code className={className} />;
-};
+import { useTheme } from '../context/ThemeContext';
 
 const Services = () => {
-  const [servicesList, setServicesList] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const { isDark } = useTheme();
 
-  useEffect(() => {
-    const fetchServices = async () => {
-      try {
-        const response = await fetch(`${API_BASE_URL}/api/services`);
-        const result = await response.json();
-        
-        if (result.success) {
-          setServicesList(result.data);
-        } else {
-          setError('Failed to fetch services.');
-        }
-      } catch (err) {
-        console.error('Error fetching services:', err);
-        setError('Error connecting to our secure servers.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchServices();
-  }, []);
-
-  const iconColors = [
-    'text-blue-600 bg-blue-50',
-    'text-indigo-600 bg-indigo-50',
-    'text-teal-600 bg-teal-50',
-    'text-purple-600 bg-purple-50',
-    'text-rose-600 bg-rose-50',
-    'text-sky-600 bg-sky-50'
+  const serviceCategories = [
+    {
+      title: 'Custom Software',
+      icon: <Code className="w-8 h-8 text-blue-500" />,
+      tagline: 'Enterprise Core Logic',
+      desc: 'Robust, secure business logic engines tailored to your specific organizational workflows. Built for high availability, security, and low latency.',
+      techs: ['Node.js', 'NestJS', 'PostgreSQL', 'Go', 'Python'],
+      features: ['Microservices Architecture', 'Secure Data Ingestion', 'Automated Testing Pipelines', 'Legacy System Migrations']
+    },
+    {
+      title: 'Web Applications',
+      icon: <Globe className="w-8 h-8 text-indigo-500" />,
+      tagline: 'Responsive Web Portals',
+      desc: 'Sleek, responsive, and SEO-optimized frontend interfaces integrated with flexible state management and rapid page load speeds.',
+      techs: ['React', 'Next.js', 'Tailwind CSS', 'TypeScript', 'GraphQL'],
+      features: ['Server-Side Rendering (SSR)', 'SEO Best Practices', 'Responsive Layout Systems', 'State Hydration & Caching']
+    },
+    {
+      title: 'Mobile Apps',
+      icon: <Smartphone className="w-8 h-8 text-cyan-500" />,
+      tagline: 'Handheld Experiences',
+      desc: 'High-fidelity mobile applications designed to perform natively on iOS and Android devices, featuring smooth animations and offline support.',
+      techs: ['Flutter', 'Swift', 'Kotlin', 'Firebase', 'SQLite'],
+      features: ['Offline Data Syncing', 'Push Notification Routing', 'Dynamic Local Storage', 'Native Device Feature Access']
+    },
+    {
+      title: 'AI Solutions',
+      icon: <Cpu className="w-8 h-8 text-purple-500" />,
+      tagline: 'Cognitive Engineering',
+      desc: 'Integrate LLMs, natural language processing models, custom recommendation algorithms, predictive analytics, and deep learning into your workflows.',
+      techs: ['Python', 'OpenAI API', 'PyTorch', 'TensorFlow', 'LangChain'],
+      features: ['LLM Orchestration & RAG', 'Semantic Vector Databases', 'Behavioral Pattern Analysis', 'AI Agent Workflows']
+    },
+    {
+      title: 'Cloud Infrastructure',
+      icon: <Cloud className="w-8 h-8 text-sky-500" />,
+      tagline: 'Auto-Scaling Clusters',
+      desc: 'Robust infrastructure deployed across multi-cloud regions with auto-scaling groups, containerization, and geo-redundant backups.',
+      techs: ['AWS', 'Azure', 'Docker', 'Kubernetes', 'Terraform'],
+      features: ['Infrastructure as Code (IaC)', 'Multi-Region Orchestration', 'Cost Optimization Metrics', 'High Availability Deployments']
+    },
+    {
+      title: 'UI/UX Design',
+      icon: <Palette className="w-8 h-8 text-rose-500" />,
+      tagline: 'Visual Prototypes',
+      desc: 'Intuitive user research, sleek design tokens, wireframes, and design systems crafted to ensure high retention and modern aesthetics.',
+      techs: ['Figma', 'Prototyping', 'Design Systems', 'User Research'],
+      features: ['Component Library Design', 'A/B Layout Prototyping', 'Accessibility Compliance (WCAG)', 'Motion & Micro-interactions']
+    },
+    {
+      title: 'API Development',
+      icon: <Network className="w-8 h-8 text-emerald-500" />,
+      tagline: 'Data Exchange Layers',
+      desc: 'Ultra-fast API design featuring middleware authentication, rate-limiting layers, real-time streams, and self-documenting endpoints.',
+      techs: ['NestJS', 'Express.js', 'Swagger', 'GraphQL', 'gRPC'],
+      features: ['OAuth2 / JWT Security', 'Rate Limiting & Throttling', 'Real-time WebSocket Streams', 'Swagger / OpenAPI Specs']
+    },
+    {
+      title: 'SaaS Development',
+      icon: <Layers className="w-8 h-8 text-violet-500" />,
+      tagline: 'Multi-Tenant Platforms',
+      desc: 'End-to-end SaaS application scaffolding featuring Stripe subscription models, user seats, tenant isolation, and activity logs.',
+      techs: ['Next.js', 'Stripe', 'Supabase', 'Clerk', 'PostgreSQL'],
+      features: ['Tenant Schema Isolation', 'Tiered Subscriptions', 'Seat Management Metrics', 'Unified Billing Portals']
+    },
+    {
+      title: 'DevOps & CI/CD',
+      icon: <Settings className="w-8 h-8 text-amber-500" />,
+      tagline: 'Delivery Pipelines',
+      desc: 'Automate software delivery pipelines, log collection metrics, container orchestration, and real-time infrastructure alerts.',
+      techs: ['GitHub Actions', 'Terraform', 'Prometheus', 'Grafana', 'Docker'],
+      features: ['Zero-Downtime Releases', 'Real-Time Health Monitoring', 'Secrets Handling', 'Performance Alerting']
+    }
   ];
 
   return (
-    <div className="bg-slate-50 min-h-screen pt-20 pb-24">
-      <SEO 
-        title="Our Services"
-        description="Premium software engineering and digital transformation services. From enterprise web systems to AI integration, Shrayu Technologies delivers excellence."
-        keywords="enterprise software, custom code, clod native, AI integration, Shrayu Technologies"
+    <div className="relative min-h-screen bg-services-atmosphere pt-36 pb-32 px-6 sm:px-8 overflow-hidden transition-colors duration-300">
+      <SEO
+        title="Services"
+        description="Explore Shrayu Technologies software engineering expertise: Custom Software, Web Apps, Mobile Apps, AI Solutions, Cloud Infrastructure, UI/UX, APIs, SaaS, and DevOps."
+        keywords="custom software development, web applications, mobile app development, AI solutions, SaaS development, cloud infrastructure"
       />
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-20">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">
-            Our Software Development <span className="text-blue-600">Expertise</span>
+
+      {/* MULTI-LAYERED BACKGROUND SYSTEM */}
+      <div className="absolute inset-0 bg-blueprint-grid opacity-20 pointer-events-none"></div>
+      <div className="absolute inset-0 noise-overlay pointer-events-none"></div>
+
+      <div className="max-w-7xl mx-auto relative z-10 space-y-20">
+        {/* Header Section */}
+        <div className="text-center max-w-4xl mx-auto space-y-6">
+          <div className="inline-flex items-center space-x-2 bg-blue-500/10 border border-blue-500/20 px-4 py-1.5 rounded-full text-blue-500 text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-sm">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Engineering Capabilities</span>
+          </div>
+          <h1 className={`text-4xl sm:text-5xl md:text-6xl font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+            Our Software Development{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-indigo-500 to-cyan-500">
+              Services
+            </span>
           </h1>
-          <p className="text-xl text-slate-600 leading-relaxed font-light">
-            We deliver exceptional software engineering and consulting services to help enterprises innovate, scale, and succeed in a digital-first world.
+          <p className={`text-base sm:text-lg md:text-xl font-medium max-w-2xl mx-auto leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+            We deliver exceptional software engineering services to help startups and growing businesses innovate, scale, and succeed in a digital-first world.
           </p>
         </div>
 
-        {loading ? (
-          <div className="flex justify-center items-center py-20">
-            <div className="relative">
-              <div className="h-16 w-16 rounded-full border-4 border-slate-200 border-t-blue-600 animate-spin"></div>
-              <div className="mt-4 text-slate-400 font-medium text-center">Loading expertise...</div>
-            </div>
-          </div>
-        ) : error ? (
-          <div className="text-center text-rose-500 bg-white p-10 rounded-3xl max-w-lg mx-auto shadow-xl border border-rose-100 mt-10">
-            <div className="bg-rose-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Shield className="h-8 w-8 text-rose-500" />
-            </div>
-            <h3 className="text-2xl font-bold mb-3 text-slate-900">Connection Interrupted</h3>
-            <p className="mb-8 text-slate-600 leading-relaxed">{error}</p>
-            <button 
-              onClick={() => window.location.reload()}
-              className="px-6 py-3 bg-slate-900 text-white rounded-xl font-semibold hover:bg-slate-800 transition-colors"
+        {/* Services Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {serviceCategories.map((service, index) => (
+            <div
+              key={index}
+              className="glass-card-3d rounded-3xl p-8 flex flex-col justify-between space-y-8"
             >
-              Retry Connection
-            </button>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
-            {servicesList.map((service, index) => {
-              const colorInfo = iconColors[index % iconColors.length];
-              const [textColor, bgColor] = colorInfo.split(' ');
-              
-              return (
-                <div 
-                  key={service._id || index} 
-                  className="bg-white p-10 rounded-[2.5rem] shadow-sm hover:shadow-2xl transition-all duration-500 border border-slate-100 group flex flex-col h-full relative overflow-hidden"
-                >
-                  <div className={`absolute top-0 right-0 p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300`}>
-                    <ExternalLink className={`h-5 w-5 ${textColor}`} />
+              <div className="space-y-6">
+                <div className="flex justify-between items-start">
+                  <div className={`p-4 rounded-2xl ${isDark ? 'bg-white/5 border border-white/10' : 'bg-slate-100 border border-slate-200'}`}>
+                    {service.icon}
                   </div>
-                  
-                  <div className={`${bgColor} w-20 h-20 flex items-center justify-center rounded-[1.5rem] mb-8 group-hover:scale-110 transition-transform duration-500 group-hover:rotate-3`}>
-                    <IconHelper name={service.iconName} className={`h-10 w-10 ${textColor}`} />
-                  </div>
-                  
-                  <h3 className="text-2xl font-bold text-slate-900 mb-4 group-hover:text-blue-600 transition-colors">
-                    {service.title}
-                  </h3>
-                  
-                  <p className="text-slate-600 leading-relaxed font-light mb-8 flex-grow">
-                    {service.description}
-                  </p>
-
-                  <Link 
-                    to="/contact" 
-                    className={`inline-flex items-center font-bold text-sm uppercase tracking-widest ${textColor} group/btn`}
-                  >
-                    <span>Consult Now</span>
-                    <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </Link>
+                  <span className={`text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border ${
+                    isDark ? 'text-blue-400 bg-blue-500/10 border-blue-500/20' : 'text-blue-700 bg-blue-50 border-blue-200'
+                  }`}>
+                    {service.tagline}
+                  </span>
                 </div>
-              );
-            })}
-          </div>
-        )}
 
-        {/* Bottom CTA */}
-        {!loading && !error && (
-          <div className="mt-24 text-center">
-            <div className="bg-slate-900 text-white p-12 md:p-16 rounded-[3rem] shadow-2xl relative overflow-hidden">
-               <div className="absolute top-0 right-0 -mr-20 -mt-20 w-64 h-64 bg-blue-600 rounded-full blur-[100px] opacity-20"></div>
-               <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-64 h-64 bg-indigo-600 rounded-full blur-[100px] opacity-20"></div>
-               
-               <h2 className="text-3xl md:text-4xl font-bold mb-6 relative z-10">Ready to Start Your Custom Software Journey?</h2>
-               <p className="text-slate-400 text-lg mb-10 max-w-2xl mx-auto relative z-10">
-                 Our technical architects are standing by to help you map out your next enterprise solution.
-               </p>
-               <Link 
-                 to="/contact" 
-                 className="inline-flex items-center px-10 py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-2xl font-bold text-lg transition-all shadow-lg hover:shadow-blue-600/40 relative z-10"
-               >
-                 Book a Discovery Call
-                 <ArrowRight className="ml-2 h-6 w-6" />
-               </Link>
+                <div className="space-y-3">
+                  <h2 className={`text-2xl font-bold transition-colors ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                    {service.title}
+                  </h2>
+                  <p className={`text-sm leading-relaxed font-medium ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                    {service.desc}
+                  </p>
+                </div>
+
+                <ul className="space-y-2.5 pt-2">
+                  {service.features.map((feature, fIdx) => (
+                    <li key={fIdx} className={`flex items-center space-x-2 text-xs font-semibold ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                      <CheckCircle2 className="w-4 h-4 text-blue-500 shrink-0" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className={`space-y-5 pt-4 border-t ${isDark ? 'border-white/10' : 'border-slate-200'}`}>
+                <div className="flex flex-wrap gap-2">
+                  {service.techs.map((tech, tIdx) => (
+                    <span
+                      key={tIdx}
+                      className={`px-3 py-1 rounded-md font-bold text-[10px] uppercase border ${
+                        isDark
+                          ? 'bg-white/5 text-slate-300 border-white/10'
+                          : 'bg-slate-100 text-slate-700 border-slate-200'
+                      }`}
+                    >
+                      {tech}
+                    </span>
+                  ))}
+                </div>
+
+                <Link
+                  to="/contact"
+                  className="inline-flex items-center space-x-2 text-xs text-blue-500 font-bold hover:text-blue-600 transition-colors uppercase tracking-widest group"
+                >
+                  <span>Consult Now</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom CTA Card */}
+        <div className="pt-8">
+          <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-tr from-blue-900 via-[#0B1021] to-indigo-900 border border-white/15 text-white p-12 sm:p-16 text-center shadow-2xl space-y-6">
+            <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+              Ready to Start Your Project?
+            </h2>
+            <p className="text-slate-300 text-base sm:text-lg max-w-xl mx-auto font-medium leading-relaxed">
+              Schedule a consultation with our software architects. We will help map your requirements into a scalable technical roadmap.
+            </p>
+            <div className="pt-4">
+              <Link
+                to="/contact"
+                className="btn-primary text-white font-bold text-base px-8 py-4 rounded-full inline-flex items-center space-x-2 border border-blue-400/30 shadow-lg shadow-blue-500/25"
+              >
+                <span>Book Free Consultation</span>
+                <ArrowRight className="w-5 h-5" />
+              </Link>
             </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   );

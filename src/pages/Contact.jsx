@@ -1,15 +1,32 @@
-import { MapPin, Phone, Mail, Clock, Send, AlertCircle } from 'lucide-react';
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import {
+  GoogleReCaptchaProvider,
+  useGoogleReCaptcha
+} from 'react-google-recaptcha-v3';
 import { toast } from 'react-toastify';
-import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import {
+  Mail,
+  Phone,
+  MessageSquare,
+  Clock,
+  MapPin,
+  Send,
+  Sparkles,
+  AlertCircle,
+  Github,
+  Linkedin,
+  Instagram
+} from 'lucide-react';
 import SEO from '../components/SEO';
 import { API_BASE_URL } from '../config/api.config';
+import { useTheme } from '../context/ThemeContext';
 
 const ContactForm = () => {
   const { executeRecaptcha } = useGoogleReCaptcha();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { isDark } = useTheme();
 
   const formik = useFormik({
     initialValues: {
@@ -19,55 +36,51 @@ const ContactForm = () => {
       message: ''
     },
     validationSchema: Yup.object({
-      name: Yup.string().min(2, 'Too Short!').max(100, 'Too Long!').required('Required'),
-      email: Yup.string().email('Invalid email').required('Required'),
-      company: Yup.string().max(100, 'Too Long!'),
-      message: Yup.string().min(10, 'Message must be at least 10 characters').max(2000, 'Too Long!').required('Required'),
+      name: Yup.string()
+        .max(50, 'Must be 50 characters or less')
+        .required('Name is required'),
+      email: Yup.string()
+        .email('Invalid email address')
+        .required('Email is required'),
+      company: Yup.string()
+        .max(50, 'Must be 50 characters or less'),
+      message: Yup.string()
+        .min(10, 'Message must be at least 10 characters')
+        .required('Project brief is required')
     }),
     onSubmit: async (values, { resetForm }) => {
-      const isDev = import.meta.env.DEV;
-      const recaptchaKey = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
-      const isRecaptchaMissing = !recaptchaKey || recaptchaKey === 'your-site-key-here';
-
-      if (!executeRecaptcha) {
-        if (isDev && isRecaptchaMissing) {
-          console.warn('reCAPTCHA not initialized. Bypassing for development...');
-        } else {
-          toast.error('reCAPTCHA not initialized. Please try again.');
-          return;
-        }
-      }
-
       setIsSubmitting(true);
       try {
-        // 1. Get reCAPTCHA token (or use dummy in dev)
-        let captchaToken = 'dev-bypass-token';
-        if (executeRecaptcha && !isRecaptchaMissing) {
-          captchaToken = await executeRecaptcha('contact_form');
+        let token = 'mock_recaptcha_token';
+        if (executeRecaptcha) {
+          token = await executeRecaptcha('contact_form');
         }
 
-        // 2. Submit to backend
-        const response = await fetch(`${API_BASE_URL}/api/contact`, {
+        const endpoint = `${API_BASE_URL}/api/contact`;
+        const response = await fetch(endpoint, {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/json'
           },
-          body: JSON.stringify({ ...values, captchaToken }),
+          body: JSON.stringify({ ...values, recaptchaToken: token })
         });
 
-        const result = await response.json();
+        const data = await response.json();
 
-        if (response.ok && result.success) {
-          toast.success(result.message || 'Message sent successfully!');
+        if (response.ok && data.success) {
+          toast.success('Your project brief has been sent successfully!');
           resetForm();
         } else {
-          toast.error(result.error || 'Failed to submit the form.');
-          console.error('Submission error details:', result.details);
+          toast.error(data.message || 'Failed to send message. Please try again.');
         }
-      } catch (error) {
-        console.error('Submission error:', error);
-        toast.error('A network error occurred. Please try again later.');
-      } finally {
+      } catch (err) {
+        console.error('Contact Form Error:', err);
+        if (err.name === 'TypeError' && err.message.includes('fetch')) {
+          toast.error('Unable to connect to server. Please check network connection.');
+        } else {
+          toast.error('A network error occurred. Please try again later.');
+        }
+      } fontFinally: {
         setIsSubmitting(false);
       }
     },
@@ -77,150 +90,289 @@ const ContactForm = () => {
     <form onSubmit={formik.handleSubmit} className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
-          <label htmlFor="name" className="block text-sm font-medium text-slate-700 mb-2">Full Name</label>
+          <label htmlFor="name" className={`block text-xs font-bold uppercase tracking-wider mb-2 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+            Full Name
+          </label>
           <input
             id="name"
             name="name"
             type="text"
             {...formik.getFieldProps('name')}
-            className={`w-full px-4 py-3 rounded-lg border ${formik.touched.name && formik.errors.name ? 'border-rose-500 focus:ring-rose-500' : 'border-slate-300 focus:ring-blue-600'} focus:ring-2 focus:border-transparent transition-colors`}
+            className={`w-full px-4 py-3.5 input-field rounded-2xl text-sm ${formik.touched.name && formik.errors.name ? 'border-rose-500' : ''}`}
             placeholder="John Doe"
           />
           {formik.touched.name && formik.errors.name ? (
-            <div className="text-rose-500 text-xs mt-1 flex items-center"><AlertCircle className="h-3 w-3 mr-1" />{formik.errors.name}</div>
+            <div className="text-rose-500 text-[10px] mt-1.5 flex items-center font-bold uppercase">
+              <AlertCircle className="h-3.5 w-3.5 mr-1 shrink-0" />
+              {formik.errors.name}
+            </div>
           ) : null}
         </div>
         <div>
-          <label htmlFor="email" className="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
+          <label htmlFor="email" className={`block text-xs font-bold uppercase tracking-wider mb-2 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+            Email Address
+          </label>
           <input
             id="email"
             name="email"
             type="email"
             {...formik.getFieldProps('email')}
-            className={`w-full px-4 py-3 rounded-lg border ${formik.touched.email && formik.errors.email ? 'border-rose-500 focus:ring-rose-500' : 'border-slate-300 focus:ring-blue-600'} focus:ring-2 focus:border-transparent transition-colors`}
+            className={`w-full px-4 py-3.5 input-field rounded-2xl text-sm ${formik.touched.email && formik.errors.email ? 'border-rose-500' : ''}`}
             placeholder="john@example.com"
           />
           {formik.touched.email && formik.errors.email ? (
-            <div className="text-rose-500 text-xs mt-1 flex items-center"><AlertCircle className="h-3 w-3 mr-1" />{formik.errors.email}</div>
+            <div className="text-rose-500 text-[10px] mt-1.5 flex items-center font-bold uppercase">
+              <AlertCircle className="h-3.5 w-3.5 mr-1 shrink-0" />
+              {formik.errors.email}
+            </div>
           ) : null}
         </div>
       </div>
 
       <div>
-        <label htmlFor="company" className="block text-sm font-medium text-slate-700 mb-2">Company (Optional)</label>
+        <label htmlFor="company" className={`block text-xs font-bold uppercase tracking-wider mb-2 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+          Company (Optional)
+        </label>
         <input
           id="company"
           name="company"
           type="text"
           {...formik.getFieldProps('company')}
-          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.company && formik.errors.company ? 'border-rose-500' : 'border-slate-300'} focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-colors`}
-          placeholder="Your Company Ltd."
+          className={`w-full px-4 py-3.5 input-field rounded-2xl text-sm ${formik.touched.company && formik.errors.company ? 'border-rose-500' : ''}`}
+          placeholder="Your Company LLC"
         />
         {formik.touched.company && formik.errors.company ? (
-          <div className="text-rose-500 text-xs mt-1 flex items-center"><AlertCircle className="h-3 w-3 mr-1" />{formik.errors.company}</div>
+          <div className="text-rose-500 text-[10px] mt-1.5 flex items-center font-bold uppercase">
+            <AlertCircle className="h-3.5 w-3.5 mr-1 shrink-0" />
+            {formik.errors.company}
+          </div>
         ) : null}
       </div>
 
       <div>
-        <label htmlFor="message" className="block text-sm font-medium text-slate-700 mb-2">Your Message</label>
+        <label htmlFor="message" className={`block text-xs font-bold uppercase tracking-wider mb-2 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+          Project Brief / Scope
+        </label>
         <textarea
           id="message"
           name="message"
           rows={5}
           {...formik.getFieldProps('message')}
-          className={`w-full px-4 py-3 rounded-lg border ${formik.touched.message && formik.errors.message ? 'border-rose-500 focus:ring-rose-500' : 'border-slate-300 focus:ring-blue-600'} focus:ring-2 focus:border-transparent transition-colors resize-none`}
-          placeholder="Tell us about your project or inquiry..."
+          className={`w-full px-4 py-3.5 input-field rounded-2xl text-sm resize-none ${formik.touched.message && formik.errors.message ? 'border-rose-500' : ''}`}
+          placeholder="Tell us about your project requirements, target timeline, and technical goals..."
         ></textarea>
         {formik.touched.message && formik.errors.message ? (
-          <div className="text-rose-500 text-xs mt-1 flex items-center"><AlertCircle className="h-3 w-3 mr-1" />{formik.errors.message}</div>
+          <div className="text-rose-500 text-[10px] mt-1.5 flex items-center font-bold uppercase">
+            <AlertCircle className="h-3.5 w-3.5 mr-1 shrink-0" />
+            {formik.errors.message}
+          </div>
         ) : null}
       </div>
 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full md:w-auto px-8 py-4 bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 text-white rounded-lg font-bold text-lg transition-all flex items-center justify-center disabled:opacity-70 disabled:cursor-not-allowed shadow-lg hover:shadow-blue-600/30"
+        className="w-full btn-primary text-white rounded-2xl py-4 font-bold text-base flex items-center justify-center space-x-2 border border-blue-400/30 shadow-xl shadow-blue-500/30 disabled:opacity-50"
       >
         {isSubmitting ? (
-          <span>Securing & Sending...</span>
+          <span>Sending Project Brief...</span>
         ) : (
           <>
-            <span>Send Secure Message</span>
-            <Send className="ml-2 h-5 w-5" />
+            <span>Send Project Brief</span>
+            <Send className="w-4 h-4" />
           </>
         )}
       </button>
 
-      <p className="text-[10px] text-slate-400 mt-4 leading-tight">
-        This site is protected by reCAPTCHA and the Google 
-        <a href="https://policies.google.com/privacy" className="text-blue-500 hover:underline mx-1">Privacy Policy</a> and
-        <a href="https://policies.google.com/terms" className="text-blue-500 hover:underline mx-1">Terms of Service</a> apply.
+      <p className={`text-[10px] text-center leading-relaxed ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+        Protected by Google reCAPTCHA and edge security layer.
       </p>
     </form>
   );
 };
 
 const Contact = () => {
+  const { isDark } = useTheme();
+
   return (
-    <div className="bg-slate-50 min-h-screen pt-12 pb-24">
-      <SEO 
+    <div className="relative min-h-screen bg-contact-atmosphere pt-36 pb-32 px-6 sm:px-8 overflow-hidden transition-colors duration-300">
+      <SEO
         title="Contact Us"
-        description="Get in touch with Shrayu Technologies. Our secure and scalable contact system ensures your inquiry is handled with the highest priority."
-        keywords="contact Shrayu Technologies, secure contact form, business inquiry, tech support"
+        description="Get in touch with Shrayu Technologies. Request a free project consultation or submit a project brief."
+        keywords="contact us, software consultation, project brief, software startup"
       />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">Contact Shrayu Technologies</h1>
-          <p className="text-xl text-slate-600 leading-relaxed">
-            Ready to start your next big project? Contact our team of experts via our secure communication channel.
+
+      {/* ATMOSPHERE OVERLAYS */}
+      <div className="absolute inset-0 bg-blueprint-mesh opacity-20 pointer-events-none"></div>
+      <div className="absolute inset-0 noise-overlay pointer-events-none"></div>
+
+      <div className="max-w-6xl mx-auto relative z-10 space-y-20">
+        {/* Header section */}
+        <div className="text-center max-w-3xl mx-auto space-y-6">
+          <div className="inline-flex items-center space-x-2 bg-blue-500/10 border border-blue-500/30 px-4 py-1.5 rounded-full text-blue-500 text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-lg shadow-blue-500/10">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Start Your Project</span>
+          </div>
+          <h1 className={`text-4xl sm:text-5xl md:text-6xl font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+            Let's Build Something{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-indigo-500 to-cyan-500">
+              Great Together
+            </span>
+          </h1>
+          <p className={`text-base sm:text-lg font-medium leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+            Have an application or product in mind? Send us your brief or reach out directly to schedule a project discovery session.
           </p>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-12 bg-white rounded-3xl overflow-hidden shadow-xl border border-slate-100">
-          
-          {/* Contact Information */}
-          <div className="lg:w-2/5 p-10 md:p-14 bg-blue-600 text-white">
-            <h2 className="text-3xl font-bold mb-6">Contact Information</h2>
-            <p className="text-blue-100 mb-12 text-lg">
-              Our enterprise-grade routing system ensures your message reaches the right expert instantly.
-            </p>
-            
-            <div className="space-y-8">
-              <div className="flex items-start">
-                <MapPin className="h-7 w-7 text-blue-300 mr-4 shrink-0" />
-                <div>
-                  <h3 className="font-semibold text-lg mb-1">Our Headquarters</h3>
-                  <p className="text-blue-100">123 Tech Boulevard<br/>Innovation District, CA 94043</p>
+        {/* Contact Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+          {/* Contact Information (Left 5 Cols) */}
+          <div className="lg:col-span-5 space-y-8">
+            <div className="glass-card-3d rounded-3xl p-8 space-y-6 shadow-2xl">
+              <h2 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>Direct Communication</h2>
+              <div className="space-y-5 text-xs font-semibold">
+                <div className="flex items-start space-x-4">
+                  <div className={`p-3 rounded-2xl shrink-0 ${isDark ? 'bg-white/5 border border-white/10' : 'bg-slate-100 border border-slate-200'}`}>
+                    <Mail className="w-5 h-5 text-blue-500" />
+                  </div>
+                  <div>
+                    <span className={`uppercase tracking-wider text-[9px] block ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Business Email</span>
+                    <a
+                      href="https://mail.google.com/mail/?view=cm&fs=1&to=shrayutech@gmail.com"
+                      target="_blank"
+                      rel="noreferrer"
+                      className={`text-sm font-bold cursor-pointer hover:underline transition-colors ${isDark ? 'text-white hover:text-blue-400' : 'text-slate-900 hover:text-blue-600'}`}
+                    >
+                      shrayutech@gmail.com
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-4">
+                  <div className={`p-3 rounded-2xl shrink-0 ${isDark ? 'bg-white/5 border border-white/10' : 'bg-slate-100 border border-slate-200'}`}>
+                    <Phone className="w-5 h-5 text-indigo-500" />
+                  </div>
+                  <div>
+                    <span className={`uppercase tracking-wider text-[9px] block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Phone / Support</span>
+                    <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 text-sm font-bold">
+                      <a
+                        href="tel:+917020046141"
+                        className={`cursor-pointer hover:underline transition-colors ${isDark ? 'text-white hover:text-indigo-400' : 'text-slate-900 hover:text-indigo-600'}`}
+                      >
+                        +91 70200 46141
+                      </a>
+                      <span className="hidden sm:inline text-slate-400">/</span>
+                      <a
+                        href="tel:+919359514760"
+                        className={`cursor-pointer hover:underline transition-colors ${isDark ? 'text-white hover:text-indigo-400' : 'text-slate-900 hover:text-indigo-600'}`}
+                      >
+                        +91 93595 14760
+                      </a>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-4">
+                  <div className={`p-3 rounded-2xl shrink-0 ${isDark ? 'bg-white/5 border border-white/10' : 'bg-slate-100 border border-slate-200'}`}>
+                    <MessageSquare className="w-5 h-5 text-emerald-500" />
+                  </div>
+                  <div>
+                    <span className={`uppercase tracking-wider text-[9px] block ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>WhatsApp Chat</span>
+                    <a
+                      href="https://wa.me/917020046141"
+                      target="_blank"
+                      rel="noreferrer"
+                      className={`text-sm font-bold transition-colors ${isDark ? 'text-white hover:text-emerald-400' : 'text-slate-900 hover:text-emerald-600'}`}
+                    >
+                      Connect on WhatsApp
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-start space-x-4">
+                  <div className={`p-3 rounded-2xl shrink-0 ${isDark ? 'bg-white/5 border border-white/10' : 'bg-slate-100 border border-slate-200'}`}>
+                    <Clock className="w-5 h-5 text-purple-500" />
+                  </div>
+                  <div>
+                    <span className={`uppercase tracking-wider text-[9px] block ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Business Hours</span>
+                    <span className={`block font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>Monday - Friday: 09:00 - 18:00 (IST)</span>
+                    <span className={`block text-[10px] pt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Emergency infrastructure support: 24/7</span>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-start">
-                <Phone className="h-7 w-7 text-blue-300 mr-4 shrink-0" />
-                <div>
-                  <h3 className="font-semibold text-lg mb-1">Phone Number</h3>
-                  <p className="text-blue-100">+91 {702004614}<br/>Available 24/7</p>
-                </div>
+
+              {/* Social Media Row */}
+              <div className={`pt-6 border-t flex space-x-3 ${isDark ? 'border-white/10' : 'border-slate-200'}`}>
+                <a
+                  href="https://github.com/shrayutech"
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                    isDark
+                      ? 'bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-blue-600/20 hover:border-blue-500/40'
+                      : 'bg-slate-100 border border-slate-200 text-slate-700 hover:text-blue-600 hover:bg-blue-50 hover:border-blue-300'
+                  }`}
+                  aria-label="GitHub"
+                >
+                  <Github className="w-4 h-4" />
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/ayushkhobragade"
+                  target="_blank"
+                  rel="noreferrer"
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                    isDark
+                      ? 'bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-blue-600/20 hover:border-blue-500/40'
+                      : 'bg-slate-100 border border-slate-200 text-slate-700 hover:text-blue-600 hover:bg-blue-50 hover:border-blue-300'
+                  }`}
+                  aria-label="LinkedIn"
+                >
+                  <Linkedin className="w-4 h-4" />
+                </a>
+                <a
+                  href="#"
+                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                    isDark
+                      ? 'bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-blue-600/20 hover:border-blue-500/40'
+                      : 'bg-slate-100 border border-slate-200 text-slate-700 hover:text-blue-600 hover:bg-blue-50 hover:border-blue-300'
+                  }`}
+                  aria-label="Instagram"
+                >
+                  <Instagram className="w-4 h-4" />
+                </a>
               </div>
-              <div className="flex items-start">
-                <Mail className="h-7 w-7 text-blue-300 mr-4 shrink-0" />
-                <div>
-                  <h3 className="font-semibold text-lg mb-1">Email Address</h3>
-                  <p className="text-blue-100">shrayutech@gmail.com</p>
-                </div>
-              </div>
-              <div className="flex items-start">
-                <Clock className="h-7 w-7 text-blue-300 mr-4 shrink-0" />
-                <div>
-                  <h3 className="font-semibold text-lg mb-1">Response Time</h3>
-                  <p className="text-blue-100">Typically under 2 hours<br/>Guaranteed within 24 hours</p>
-                </div>
+            </div>
+
+            {/* Google Maps Location Embed */}
+            <div className="glass-card-3d rounded-3xl p-6 space-y-4 shadow-2xl">
+              <h3 className={`text-sm font-bold flex items-center space-x-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                <MapPin className="w-4 h-4 text-blue-500" />
+                <span>Headquarters Location</span>
+              </h3>
+              <div className={`h-48 rounded-2xl overflow-hidden border shadow-inner ${isDark ? 'border-white/10' : 'border-slate-200'}`}>
+                <iframe
+                  title="Shrayu Headquarters Map"
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d119066.52982230402!2d79.00246101962386!3d21.139349622359463!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bd4c0a5a31daf11%3A0x7d1a7178f30711aa!2sNagpur%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0, filter: isDark ? 'invert(90%) hue-rotate(180deg)' : 'none' }}
+                  allowFullScreen=""
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                ></iframe>
               </div>
             </div>
           </div>
 
-          <div className="lg:w-3/5 p-10 md:p-14">
-            <h2 className="text-3xl font-bold text-slate-900 mb-8">Send us a Message</h2>
-            <GoogleReCaptchaProvider 
-              reCaptchaKey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'} 
+          {/* Form Card (Right 7 Cols) */}
+          <div className="lg:col-span-7 glass-card-3d rounded-3xl p-8 sm:p-10 shadow-2xl space-y-6">
+            <div>
+              <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>Project Inquiry Form</h2>
+              <p className={`text-xs font-medium pt-1 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>Fill out the details below to receive a technical scoping response.</p>
+            </div>
+
+            <GoogleReCaptchaProvider
+              reCaptchaKey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'}
               useRecaptchaNet={false}
               scriptProps={{
                 async: true,
