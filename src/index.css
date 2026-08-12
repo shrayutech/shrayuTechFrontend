@@ -51,11 +51,17 @@ html.dark {
   --badge-bg: rgba(37, 99, 235, 0.1);
   --badge-border: rgba(37, 99, 235, 0.3);
   --badge-text: #60A5FA;
+
+  /* SKELETON THEME TOKENS - DARK MODE */
+  --skeleton-bg: #141A2A;
+  --skeleton-secondary: #1B2335;
+  --skeleton-highlight: #252E43;
+  --skeleton-border: rgba(255, 255, 255, 0.07);
 }
 
 html.light {
   color-scheme: light;
-  --bg-app: #F7F9FC;
+  --bg-app: #F8FAFC;
   --text-app-primary: #0F172A;
   --text-app-secondary: #475569;
   --text-app-muted: #64748B;
@@ -87,6 +93,46 @@ html.light {
   --badge-bg: #EFF6FF;
   --badge-border: #BFDBFE;
   --badge-text: #1D4ED8;
+
+  /* SKELETON THEME TOKENS - LIGHT MODE */
+  --skeleton-bg: #E9EEF5;
+  --skeleton-secondary: #E2E8F0;
+  --skeleton-highlight: #F4F7FB;
+  --skeleton-border: rgba(15, 23, 42, 0.06);
+}
+
+/* ==========================================
+   PREMIUM SKELETON SHIMMER ANIMATION ENGINE
+   ========================================== */
+
+@keyframes skeletonShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton-shimmer {
+  background-color: var(--skeleton-bg);
+  background-image: linear-gradient(
+    90deg,
+    var(--skeleton-bg) 0%,
+    var(--skeleton-highlight) 50%,
+    var(--skeleton-bg) 100%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.8s ease-in-out infinite;
+  border: 1px solid var(--skeleton-border);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer {
+    animation: none !important;
+    background-image: none !important;
+    background-color: var(--skeleton-bg) !important;
+  }
 }
 
 html {

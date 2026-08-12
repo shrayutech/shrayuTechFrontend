@@ -16,12 +16,14 @@ import {
   Sparkles,
   AlertCircle,
   Github,
-  Linkedin,
-  Instagram
+  Linkedin
 } from 'lucide-react';
 import SEO from '../components/SEO';
 import { API_BASE_URL } from '../config/api.config';
 import { useTheme } from '../context/ThemeContext';
+import { useSkeleton } from '../context/SkeletonContext';
+import SkeletonWrapper from '../components/skeleton/SkeletonWrapper';
+import ContactSkeleton from '../components/skeleton/ContactSkeleton';
 
 const ContactForm = () => {
   const { executeRecaptcha } = useGoogleReCaptcha();
@@ -80,7 +82,7 @@ const ContactForm = () => {
         } else {
           toast.error('A network error occurred. Please try again later.');
         }
-      } fontFinally: {
+      } finally {
         setIsSubmitting(false);
       }
     },
@@ -193,199 +195,191 @@ const ContactForm = () => {
 
 const Contact = () => {
   const { isDark } = useTheme();
+  const { isLoading } = useSkeleton();
 
   return (
-    <div className="relative min-h-screen bg-contact-atmosphere pt-36 pb-32 px-6 sm:px-8 overflow-hidden transition-colors duration-300">
-      <SEO
-        title="Contact Us"
-        description="Get in touch with Shrayu Technologies. Request a free project consultation or submit a project brief."
-        keywords="contact us, software consultation, project brief, software startup"
-      />
+    <SkeletonWrapper loading={isLoading} skeleton={<ContactSkeleton />}>
+      <div className="relative min-h-screen bg-contact-atmosphere pt-36 pb-32 px-6 sm:px-8 overflow-hidden transition-colors duration-300">
+        <SEO
+          title="Contact Us"
+          description="Get in touch with Shrayu Technologies. Request a free project consultation or submit a project brief."
+          keywords="contact us, software consultation, project brief, software startup"
+        />
 
-      {/* ATMOSPHERE OVERLAYS */}
-      <div className="absolute inset-0 bg-blueprint-mesh opacity-20 pointer-events-none"></div>
-      <div className="absolute inset-0 noise-overlay pointer-events-none"></div>
+        {/* ATMOSPHERE OVERLAYS */}
+        <div className="absolute inset-0 bg-blueprint-mesh opacity-20 pointer-events-none"></div>
+        <div className="absolute inset-0 noise-overlay pointer-events-none"></div>
 
-      <div className="max-w-6xl mx-auto relative z-10 space-y-20">
-        {/* Header section */}
-        <div className="text-center max-w-3xl mx-auto space-y-6">
-          <div className="inline-flex items-center space-x-2 bg-blue-500/10 border border-blue-500/30 px-4 py-1.5 rounded-full text-blue-500 text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-lg shadow-blue-500/10">
-            <Sparkles className="w-3.5 h-3.5" />
-            <span>Start Your Project</span>
+        <div className="max-w-6xl mx-auto relative z-10 space-y-20">
+          {/* Header section */}
+          <div className="text-center max-w-3xl mx-auto space-y-6">
+            <div className="inline-flex items-center space-x-2 bg-blue-500/10 border border-blue-500/30 px-4 py-1.5 rounded-full text-blue-500 text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-lg shadow-blue-500/10">
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>Start Your Project</span>
+            </div>
+            <h1 className={`text-4xl sm:text-5xl md:text-6xl font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              Let's Build Something{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-indigo-500 to-cyan-500">
+                Great Together
+              </span>
+            </h1>
+            <p className={`text-base sm:text-lg font-medium leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+              Have an application or product in mind? Send us your brief or reach out directly to schedule a project discovery session.
+            </p>
           </div>
-          <h1 className={`text-4xl sm:text-5xl md:text-6xl font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
-            Let's Build Something{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-indigo-500 to-cyan-500">
-              Great Together
-            </span>
-          </h1>
-          <p className={`text-base sm:text-lg font-medium leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
-            Have an application or product in mind? Send us your brief or reach out directly to schedule a project discovery session.
-          </p>
-        </div>
 
-        {/* Contact Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
-          {/* Contact Information (Left 5 Cols) */}
-          <div className="lg:col-span-5 space-y-8">
-            <div className="glass-card-3d rounded-3xl p-8 space-y-6 shadow-2xl">
-              <h2 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>Direct Communication</h2>
-              <div className="space-y-5 text-xs font-semibold">
-                <div className="flex items-start space-x-4">
-                  <div className={`p-3 rounded-2xl shrink-0 ${isDark ? 'bg-white/5 border border-white/10' : 'bg-slate-100 border border-slate-200'}`}>
-                    <Mail className="w-5 h-5 text-blue-500" />
+          {/* Contact Layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            {/* Contact Information (Left 5 Cols) */}
+            <div className="lg:col-span-5 space-y-8">
+              <div className="glass-card-3d rounded-3xl p-8 space-y-6 shadow-2xl">
+                <h2 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>Direct Communication</h2>
+                <div className="space-y-5 text-xs font-semibold">
+                  <div className="flex items-start space-x-4">
+                    <div className={`p-3 rounded-2xl shrink-0 ${isDark ? 'bg-white/5 border border-white/10' : 'bg-slate-100 border border-slate-200'}`}>
+                      <Mail className="w-5 h-5 text-blue-500" />
+                    </div>
+                    <div>
+                      <span className={`uppercase tracking-wider text-[9px] block ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Business Email</span>
+                      <a
+                        href="https://mail.google.com/mail/?view=cm&fs=1&to=shrayutech@gmail.com"
+                        target="_blank"
+                        rel="noreferrer"
+                        className={`text-sm font-bold cursor-pointer hover:underline transition-colors ${isDark ? 'text-white hover:text-blue-400' : 'text-slate-900 hover:text-blue-600'}`}
+                      >
+                        shrayutech@gmail.com
+                      </a>
+                    </div>
                   </div>
-                  <div>
-                    <span className={`uppercase tracking-wider text-[9px] block ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Business Email</span>
-                    <a
-                      href="https://mail.google.com/mail/?view=cm&fs=1&to=shrayutech@gmail.com"
-                      target="_blank"
-                      rel="noreferrer"
-                      className={`text-sm font-bold cursor-pointer hover:underline transition-colors ${isDark ? 'text-white hover:text-blue-400' : 'text-slate-900 hover:text-blue-600'}`}
-                    >
-                      shrayutech@gmail.com
-                    </a>
-                  </div>
-                </div>
 
-                <div className="flex items-start space-x-4">
-                  <div className={`p-3 rounded-2xl shrink-0 ${isDark ? 'bg-white/5 border border-white/10' : 'bg-slate-100 border border-slate-200'}`}>
-                    <Phone className="w-5 h-5 text-indigo-500" />
+                  <div className="flex items-start space-x-4">
+                    <div className={`p-3 rounded-2xl shrink-0 ${isDark ? 'bg-white/5 border border-white/10' : 'bg-slate-100 border border-slate-200'}`}>
+                      <Phone className="w-5 h-5 text-indigo-500" />
+                    </div>
+                    <div>
+                      <span className={`uppercase tracking-wider text-[9px] block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Phone / Support</span>
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 text-sm font-bold">
+                        <a
+                          href="tel:+917020046141"
+                          className={`cursor-pointer hover:underline transition-colors ${isDark ? 'text-white hover:text-indigo-400' : 'text-slate-900 hover:text-indigo-600'}`}
+                        >
+                          +91 70200 46141
+                        </a>
+                        <span className="hidden sm:inline text-slate-400">/</span>
+                        <a
+                          href="tel:+919359514760"
+                          className={`cursor-pointer hover:underline transition-colors ${isDark ? 'text-white hover:text-indigo-400' : 'text-slate-900 hover:text-indigo-600'}`}
+                        >
+                          +91 93595 14760
+                        </a>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <span className={`uppercase tracking-wider text-[9px] block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Phone / Support</span>
-                    <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 text-sm font-bold">
+
+                  <div className="flex items-start space-x-4">
+                    <div className={`p-3 rounded-2xl shrink-0 ${isDark ? 'bg-white/5 border border-white/10' : 'bg-slate-100 border border-slate-200'}`}>
+                      <MessageSquare className="w-5 h-5 text-emerald-500" />
+                    </div>
+                    <div>
+                      <span className={`uppercase tracking-wider text-[9px] block ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>WhatsApp Chat</span>
                       <a
-                        href="tel:+917020046141"
-                        className={`cursor-pointer hover:underline transition-colors ${isDark ? 'text-white hover:text-indigo-400' : 'text-slate-900 hover:text-indigo-600'}`}
+                        href="https://wa.me/917020046141"
+                        target="_blank"
+                        rel="noreferrer"
+                        className={`text-sm font-bold transition-colors ${isDark ? 'text-white hover:text-emerald-400' : 'text-slate-900 hover:text-emerald-600'}`}
                       >
-                        +91 70200 46141
+                        Connect on WhatsApp
                       </a>
-                      <span className="hidden sm:inline text-slate-400">/</span>
-                      <a
-                        href="tel:+919359514760"
-                        className={`cursor-pointer hover:underline transition-colors ${isDark ? 'text-white hover:text-indigo-400' : 'text-slate-900 hover:text-indigo-600'}`}
-                      >
-                        +91 93595 14760
-                      </a>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start space-x-4">
+                    <div className={`p-3 rounded-2xl shrink-0 ${isDark ? 'bg-white/5 border border-white/10' : 'bg-slate-100 border border-slate-200'}`}>
+                      <Clock className="w-5 h-5 text-purple-500" />
+                    </div>
+                    <div>
+                      <span className={`uppercase tracking-wider text-[9px] block ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Business Hours</span>
+                      <span className={`block font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>Monday - Friday: 09:00 - 18:00 (IST)</span>
+                      <span className={`block text-[10px] pt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Emergency infrastructure support: 24/7</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-start space-x-4">
-                  <div className={`p-3 rounded-2xl shrink-0 ${isDark ? 'bg-white/5 border border-white/10' : 'bg-slate-100 border border-slate-200'}`}>
-                    <MessageSquare className="w-5 h-5 text-emerald-500" />
-                  </div>
-                  <div>
-                    <span className={`uppercase tracking-wider text-[9px] block ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>WhatsApp Chat</span>
-                    <a
-                      href="https://wa.me/917020046141"
-                      target="_blank"
-                      rel="noreferrer"
-                      className={`text-sm font-bold transition-colors ${isDark ? 'text-white hover:text-emerald-400' : 'text-slate-900 hover:text-emerald-600'}`}
-                    >
-                      Connect on WhatsApp
-                    </a>
-                  </div>
+                {/* Social Media Row */}
+                <div className={`pt-6 border-t flex space-x-3 ${isDark ? 'border-white/10' : 'border-slate-200'}`}>
+                  <a
+                    href="https://github.com/shrayutech"
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                      isDark
+                        ? 'bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-blue-600/20 hover:border-blue-500/40'
+                        : 'bg-slate-100 border border-slate-200 text-slate-700 hover:text-blue-600 hover:bg-blue-50 hover:border-blue-300'
+                    }`}
+                    aria-label="GitHub"
+                  >
+                    <Github className="w-4 h-4" />
+                  </a>
+                  <a
+                    href="https://www.linkedin.com/in/ayushkhobragade"
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+                      isDark
+                        ? 'bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-blue-600/20 hover:border-blue-500/40'
+                        : 'bg-slate-100 border border-slate-200 text-slate-700 hover:text-blue-600 hover:bg-blue-50 hover:border-blue-300'
+                    }`}
+                    aria-label="LinkedIn"
+                  >
+                    <Linkedin className="w-4 h-4" />
+                  </a>
                 </div>
+              </div>
 
-                <div className="flex items-start space-x-4">
-                  <div className={`p-3 rounded-2xl shrink-0 ${isDark ? 'bg-white/5 border border-white/10' : 'bg-slate-100 border border-slate-200'}`}>
-                    <Clock className="w-5 h-5 text-purple-500" />
-                  </div>
-                  <div>
-                    <span className={`uppercase tracking-wider text-[9px] block ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Business Hours</span>
-                    <span className={`block font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>Monday - Friday: 09:00 - 18:00 (IST)</span>
-                    <span className={`block text-[10px] pt-0.5 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Emergency infrastructure support: 24/7</span>
-                  </div>
+              {/* Office Location Map */}
+              <div className="space-y-4 pt-4">
+                <h3 className={`text-xs font-bold uppercase tracking-widest flex items-center space-x-2 ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>
+                  <MapPin className="w-4 h-4 text-blue-500" />
+                  <span>Headquarters Location</span>
+                </h3>
+                <div className={`h-48 rounded-2xl overflow-hidden border shadow-inner ${isDark ? 'border-white/10' : 'border-slate-200'}`}>
+                  <iframe
+                    title="Shrayu Headquarters Map"
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d119066.52982230402!2d79.00246101962386!3d21.139349622359463!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bd4c0a5a31daf11%3A0x7d1a7178f30711aa!2sNagpur%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
+                    width="100%"
+                    height="100%"
+                    style={{ border: 0, filter: isDark ? 'invert(90%) hue-rotate(180deg)' : 'none' }}
+                    allowFullScreen=""
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  ></iframe>
                 </div>
               </div>
+            </div>
 
-              {/* Social Media Row */}
-              <div className={`pt-6 border-t flex space-x-3 ${isDark ? 'border-white/10' : 'border-slate-200'}`}>
-                <a
-                  href="https://github.com/shrayutech"
-                  target="_blank"
-                  rel="noreferrer"
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
-                    isDark
-                      ? 'bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-blue-600/20 hover:border-blue-500/40'
-                      : 'bg-slate-100 border border-slate-200 text-slate-700 hover:text-blue-600 hover:bg-blue-50 hover:border-blue-300'
-                  }`}
-                  aria-label="GitHub"
-                >
-                  <Github className="w-4 h-4" />
-                </a>
-                <a
-                  href="https://www.linkedin.com/in/ayushkhobragade"
-                  target="_blank"
-                  rel="noreferrer"
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
-                    isDark
-                      ? 'bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-blue-600/20 hover:border-blue-500/40'
-                      : 'bg-slate-100 border border-slate-200 text-slate-700 hover:text-blue-600 hover:bg-blue-50 hover:border-blue-300'
-                  }`}
-                  aria-label="LinkedIn"
-                >
-                  <Linkedin className="w-4 h-4" />
-                </a>
-                <a
-                  href="#"
-                  className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
-                    isDark
-                      ? 'bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-blue-600/20 hover:border-blue-500/40'
-                      : 'bg-slate-100 border border-slate-200 text-slate-700 hover:text-blue-600 hover:bg-blue-50 hover:border-blue-300'
-                  }`}
-                  aria-label="Instagram"
-                >
-                  <Instagram className="w-4 h-4" />
-                </a>
+            {/* Form Card (Right 7 Cols) */}
+            <div className="lg:col-span-7 glass-card-3d rounded-3xl p-8 sm:p-10 shadow-2xl space-y-6">
+              <div>
+                <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>Project Inquiry Form</h2>
+                <p className={`text-xs font-medium pt-1 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>Fill out the details below to receive a technical scoping response.</p>
               </div>
-            </div>
 
-            {/* Google Maps Location Embed */}
-            <div className="glass-card-3d rounded-3xl p-6 space-y-4 shadow-2xl">
-              <h3 className={`text-sm font-bold flex items-center space-x-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                <MapPin className="w-4 h-4 text-blue-500" />
-                <span>Headquarters Location</span>
-              </h3>
-              <div className={`h-48 rounded-2xl overflow-hidden border shadow-inner ${isDark ? 'border-white/10' : 'border-slate-200'}`}>
-                <iframe
-                  title="Shrayu Headquarters Map"
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d119066.52982230402!2d79.00246101962386!3d21.139349622359463!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bd4c0a5a31daf11%3A0x7d1a7178f30711aa!2sNagpur%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0, filter: isDark ? 'invert(90%) hue-rotate(180deg)' : 'none' }}
-                  allowFullScreen=""
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                ></iframe>
-              </div>
+              <GoogleReCaptchaProvider
+                reCaptchaKey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'}
+                useRecaptchaNet={false}
+                scriptProps={{
+                  async: true,
+                  defer: true,
+                  appendTo: 'head',
+                }}
+              >
+                <ContactForm />
+              </GoogleReCaptchaProvider>
             </div>
-          </div>
-
-          {/* Form Card (Right 7 Cols) */}
-          <div className="lg:col-span-7 glass-card-3d rounded-3xl p-8 sm:p-10 shadow-2xl space-y-6">
-            <div>
-              <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>Project Inquiry Form</h2>
-              <p className={`text-xs font-medium pt-1 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>Fill out the details below to receive a technical scoping response.</p>
-            </div>
-
-            <GoogleReCaptchaProvider
-              reCaptchaKey={import.meta.env.VITE_RECAPTCHA_SITE_KEY || '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI'}
-              useRecaptchaNet={false}
-              scriptProps={{
-                async: true,
-                defer: true,
-                appendTo: 'head',
-              }}
-            >
-              <ContactForm />
-            </GoogleReCaptchaProvider>
           </div>
         </div>
       </div>
-    </div>
+    </SkeletonWrapper>
   );
 };
 

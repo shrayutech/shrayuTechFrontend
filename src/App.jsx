@@ -5,21 +5,24 @@ import About from './pages/About';
 import Services from './pages/Services';
 import Products from './pages/Products';
 import Contact from './pages/Contact';
+import { SkeletonProvider } from './context/SkeletonContext';
 
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<Home />} />
-          <Route path="about" element={<About />} />
-          <Route path="services" element={<Services />} />
-          <Route path="portfolio" element={<Products />} />
-          <Route path="projects" element={<Navigate to="/portfolio" replace />} />
-          <Route path="products" element={<Navigate to="/portfolio" replace />} />
-          <Route path="contact" element={<Contact />} />
-        </Route>
-      </Routes>
+      <SkeletonProvider>
+        <Routes>
+          <Route path="/" element={<MainLayout />}>
+            <Route index element={<Home />} />
+            <Route path="about" element={<About />} />
+            <Route path="services" element={<Services />} />
+            <Route path="portfolio" element={<Products />} />
+            <Route path="projects" element={<Navigate to="/portfolio" replace />} />
+            <Route path="products" element={<Navigate to="/portfolio" replace />} />
+            <Route path="contact" element={<Contact />} />
+          </Route>
+        </Routes>
+      </SkeletonProvider>
     </Router>
   );
 }
