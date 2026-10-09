@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+/* eslint-disable react-refresh/only-export-components */
+import React, { createContext, useContext, useState } from 'react';
 
 const SkeletonContext = createContext({
   isLoading: false,
@@ -10,20 +10,8 @@ const SkeletonContext = createContext({
 });
 
 export const SkeletonProvider = ({ children }) => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isDemoMode, setIsDemoMode] = useState(false);
-  const location = useLocation();
-
-  // Simulate smooth initial page load & route transition loading state
-  useEffect(() => {
-    if (!isDemoMode) {
-      setIsLoading(true);
-      const timer = setTimeout(() => {
-        setIsLoading(false);
-      }, 700); // 700ms elegant initial load
-      return () => clearTimeout(timer);
-    }
-  }, [location.pathname]);
 
   const triggerLoading = (duration = 1200) => {
     setIsLoading(true);

@@ -30,14 +30,15 @@ import { useTheme } from '../context/ThemeContext';
 import { useSkeleton } from '../context/SkeletonContext';
 import SkeletonWrapper from '../components/skeleton/SkeletonWrapper';
 import HomeSkeleton from '../components/skeleton/HomeSkeleton';
+import SpotlightCard from '../components/SpotlightCard';
 
 const Home = () => {
   const { isDark } = useTheme();
   const { isLoading } = useSkeleton();
 
   const fadeInUp = {
-    hidden: { opacity: 0, y: 30 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } }
+    hidden: { opacity: 0, y: 24 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } }
   };
 
   const staggerContainer = {
@@ -45,7 +46,7 @@ const Home = () => {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
+        staggerChildren: 0.08
       }
     }
   };
@@ -165,7 +166,7 @@ const Home = () => {
         <div className="absolute top-1/3 right-10 w-[500px] h-[500px] bg-indigo-600/20 rounded-full blur-[160px] animate-pulse-glow pointer-events-none"></div>
 
         {/* Abstract Flowing Ribbon Vector Overlay */}
-        <div className="absolute top-0 inset-x-0 h-[800px] opacity-25 pointer-events-none overflow-hidden">
+        <div className="absolute top-0 inset-x-0 h-[800px] opacity-25 pointer-events-none overflow-hidden floating-hero-visual">
           <svg className="w-full h-full" viewBox="0 0 1440 800" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M-100 200 C 300 400, 700 100, 1540 300" stroke="url(#ribbonGradient1)" strokeWidth="2" strokeDasharray="6 6" />
             <path d="M-100 350 C 400 100, 900 500, 1540 200" stroke="url(#ribbonGradient2)" strokeWidth="3" />
@@ -206,7 +207,7 @@ const Home = () => {
             >
               Building Software <br />
               That Powers{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-indigo-500 to-cyan-500">
+              <span className="gradient-text-animated">
                 Modern Businesses
               </span>
             </motion.h1>
@@ -226,14 +227,14 @@ const Home = () => {
             >
               <Link
                 to="/contact"
-                className="btn-primary text-white font-bold text-base px-8 py-4 rounded-full flex items-center justify-center space-x-2 border border-blue-400/30 shadow-xl shadow-blue-500/30"
+                className="btn-primary group text-white font-bold text-base px-8 py-4 rounded-full flex items-center justify-center space-x-2 border border-blue-400/30 shadow-xl shadow-blue-500/30 active:scale-95 transition-all"
               >
                 <span>Start Your Project</span>
-                <ArrowRight className="w-5 h-5" />
+                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
               </Link>
               <Link
                 to="/portfolio"
-                className="btn-secondary text-base font-bold px-8 py-4 rounded-full flex items-center justify-center space-x-2"
+                className="btn-secondary text-base font-bold px-8 py-4 rounded-full flex items-center justify-center space-x-2 active:scale-95 transition-all"
               >
                 <span>View Case Studies</span>
               </Link>
@@ -262,9 +263,15 @@ const Home = () => {
         </section>
 
         {/* TECH STACK ENVIRONMENT */}
-        <section className={`py-24 border-t bg-services-atmosphere relative z-10 px-6 sm:px-8 ${
-          isDark ? 'border-white/10' : 'border-slate-200'
-        }`}>
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className={`py-24 border-t bg-services-atmosphere relative z-10 px-6 sm:px-8 ${
+            isDark ? 'border-white/10' : 'border-slate-200'
+          }`}
+        >
           <div className="max-w-7xl mx-auto text-center space-y-12">
             <div className="space-y-3">
               <span className="text-blue-500 font-bold text-xs uppercase tracking-[0.2em]">Technology Stack</span>
@@ -275,30 +282,38 @@ const Home = () => {
 
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-6">
               {techLogos.map((tech) => (
-                <div
+                <SpotlightCard
                   key={tech.name}
-                  className="p-6 rounded-2xl glass-card-3d flex flex-col items-center justify-center space-y-3 hover:scale-105 transition-all duration-300 cursor-default group"
+                  className="p-6 rounded-2xl glass-card-3d hover:scale-105 transition-all duration-300 cursor-default"
                 >
-                  <div className={`p-3 rounded-xl group-hover:scale-110 transition-transform duration-300 ${
-                    isDark ? 'bg-white/5' : 'bg-slate-100'
-                  }`}>
-                    {tech.icon}
+                  <div className="flex flex-col items-center justify-center text-center space-y-3 w-full h-full">
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 ${
+                      isDark ? 'bg-white/5 border border-white/10' : 'bg-slate-100 border border-slate-200'
+                    }`}>
+                      {tech.icon}
+                    </div>
+                    <span className={`text-xs font-bold transition-colors ${
+                      isDark ? 'text-slate-300 group-hover:text-white' : 'text-slate-700 group-hover:text-slate-900'
+                    }`}>
+                      {tech.name}
+                    </span>
                   </div>
-                  <span className={`text-xs font-bold transition-colors ${
-                    isDark ? 'text-slate-300 group-hover:text-white' : 'text-slate-700 group-hover:text-slate-900'
-                  }`}>
-                    {tech.name}
-                  </span>
-                </div>
+                </SpotlightCard>
               ))}
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* SERVICES OVERVIEW */}
-        <section className={`py-32 relative z-10 border-t bg-services-atmosphere px-6 sm:px-8 ${
-          isDark ? 'border-white/10' : 'border-slate-200'
-        }`}>
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className={`py-32 relative z-10 border-t bg-services-atmosphere px-6 sm:px-8 ${
+            isDark ? 'border-white/10' : 'border-slate-200'
+          }`}
+        >
           <div className="max-w-7xl mx-auto space-y-20">
             <div className="text-center max-w-3xl mx-auto space-y-4">
               <span className="text-blue-500 font-bold text-xs uppercase tracking-[0.2em]">What We Build</span>
@@ -312,12 +327,14 @@ const Home = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {services.map((service, idx) => (
-                <div
+                <SpotlightCard
                   key={idx}
                   className="glass-card-3d rounded-3xl p-8 flex flex-col justify-between space-y-8"
                 >
                   <div className="space-y-6">
-                    <div className={`p-4 rounded-2xl w-max ${isDark ? 'bg-white/5 border border-white/10' : 'bg-slate-100 border border-slate-200'}`}>
+                    <div className={`p-4 rounded-2xl w-max transition-transform duration-300 group-hover:scale-105 ${
+                      isDark ? 'bg-white/5 border border-white/10' : 'bg-slate-100 border border-slate-200'
+                    }`}>
                       {service.icon}
                     </div>
                     <div className="space-y-2">
@@ -335,10 +352,10 @@ const Home = () => {
                       {service.techs.map((t, tIdx) => (
                         <span
                           key={tIdx}
-                          className={`px-3 py-1 rounded-md font-bold text-[10px] uppercase border ${
+                          className={`px-3 py-1 rounded-md font-bold text-[10px] uppercase border transition-colors ${
                             isDark
-                              ? 'bg-white/5 text-slate-300 border-white/10'
-                              : 'bg-slate-100 text-slate-700 border-slate-200'
+                              ? 'bg-white/5 text-slate-300 border-white/10 group-hover:border-blue-500/30'
+                              : 'bg-slate-100 text-slate-700 border-slate-200 group-hover:border-blue-300'
                           }`}
                         >
                           {t}
@@ -351,19 +368,25 @@ const Home = () => {
                       className="inline-flex items-center space-x-2 text-xs text-blue-500 font-bold hover:text-blue-600 transition-colors uppercase tracking-widest group"
                     >
                       <span>Consult Now</span>
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1.5 transition-transform duration-200" />
                     </Link>
                   </div>
-                </div>
+                </SpotlightCard>
               ))}
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* WHY CHOOSE US */}
-        <section className={`py-32 relative z-10 border-t bg-about-atmosphere px-6 sm:px-8 ${
-          isDark ? 'border-white/10' : 'border-slate-200'
-        }`}>
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className={`py-32 relative z-10 border-t bg-about-atmosphere px-6 sm:px-8 ${
+            isDark ? 'border-white/10' : 'border-slate-200'
+          }`}
+        >
           <div className="max-w-7xl mx-auto space-y-20">
             <div className="text-center max-w-3xl mx-auto space-y-4">
               <span className="text-blue-500 font-bold text-xs uppercase tracking-[0.2em]">Why Trust Us</span>
@@ -377,25 +400,33 @@ const Home = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
               {whyChooseUs.map((feature, idx) => (
-                <div
+                <SpotlightCard
                   key={idx}
                   className="glass-card-3d rounded-3xl p-8 space-y-5"
                 >
-                  <div className={`p-3.5 rounded-2xl w-max ${isDark ? 'bg-blue-500/10 border border-blue-500/20' : 'bg-blue-50 border border-blue-200'}`}>
+                  <div className={`p-3.5 rounded-2xl w-max transition-transform duration-300 group-hover:scale-105 ${
+                    isDark ? 'bg-blue-500/10 border border-blue-500/20' : 'bg-blue-50 border border-blue-200'
+                  }`}>
                     {feature.icon}
                   </div>
                   <h3 className={`font-bold text-xl ${isDark ? 'text-white' : 'text-slate-900'}`}>{feature.title}</h3>
                   <p className={`text-sm font-medium leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>{feature.desc}</p>
-                </div>
+                </SpotlightCard>
               ))}
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* DEVELOPMENT PROCESS TIMELINE */}
-        <section className={`py-32 relative z-10 border-t bg-hero-atmosphere px-6 sm:px-8 ${
-          isDark ? 'border-white/10' : 'border-slate-200'
-        }`}>
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className={`py-32 relative z-10 border-t bg-hero-atmosphere px-6 sm:px-8 ${
+            isDark ? 'border-white/10' : 'border-slate-200'
+          }`}
+        >
           <div className="max-w-7xl mx-auto space-y-20">
             <div className="text-center max-w-3xl mx-auto space-y-4">
               <span className="text-blue-500 font-bold text-xs uppercase tracking-[0.2em]">Development Process</span>
@@ -407,13 +438,13 @@ const Home = () => {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-8 gap-8 relative pt-6">
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4 sm:gap-6 relative pt-6">
               {processSteps.map((step, idx) => (
                 <div key={idx} className="flex flex-col items-center text-center space-y-4 group">
                   <div className={`w-14 h-14 rounded-2xl border flex items-center justify-center relative shadow-xl group-hover:scale-110 transition-all duration-300 ${
                     isDark
-                      ? 'bg-[#111827] border-white/15 group-hover:border-blue-500/50'
-                      : 'bg-white border-slate-200 group-hover:border-blue-500/50'
+                      ? 'bg-[#111827] border-white/15 group-hover:border-blue-500/50 group-hover:shadow-blue-500/20'
+                      : 'bg-white border-slate-200 group-hover:border-blue-500/50 group-hover:shadow-blue-500/10'
                   }`}>
                     {step.icon}
                     <div className="absolute -top-3 -right-2 text-[10px] bg-blue-600 text-white font-bold px-1.5 py-0.5 rounded-full shadow">
@@ -421,21 +452,27 @@ const Home = () => {
                     </div>
                   </div>
                   <div className="space-y-1">
-                    <h3 className={`font-bold text-base transition-colors ${isDark ? 'text-white group-hover:text-blue-400' : 'text-slate-900 group-hover:text-blue-600'}`}>
+                    <h3 className={`font-bold text-sm sm:text-base transition-colors ${isDark ? 'text-white group-hover:text-blue-400' : 'text-slate-900 group-hover:text-blue-600'}`}>
                       {step.name}
                     </h3>
-                    <p className={`text-xs font-medium leading-relaxed px-2 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{step.desc}</p>
+                    <p className={`text-xs font-medium leading-relaxed px-1 sm:px-2 ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>{step.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* FEATURED CASE STUDIES PREVIEW */}
-        <section className={`py-32 relative z-10 border-t bg-portfolio-atmosphere px-6 sm:px-8 ${
-          isDark ? 'border-white/10' : 'border-slate-200'
-        }`}>
+        <motion.section
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className={`py-32 relative z-10 border-t bg-portfolio-atmosphere px-6 sm:px-8 ${
+            isDark ? 'border-white/10' : 'border-slate-200'
+          }`}
+        >
           <div className="max-w-7xl mx-auto space-y-20">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
               <div className="space-y-4 max-w-2xl">
@@ -445,16 +482,19 @@ const Home = () => {
               </div>
               <Link
                 to="/portfolio"
-                className="btn-secondary text-xs font-bold px-6 py-3 rounded-full flex items-center space-x-2"
+                className="btn-secondary group text-xs font-bold px-6 py-3 rounded-full flex items-center space-x-2 active:scale-95 transition-all"
               >
                 <span>Explore All Case Studies</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
               </Link>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {featuredCaseStudies.map((study, idx) => (
-                <div key={idx} className="glass-card-3d rounded-3xl p-8 sm:p-10 space-y-6 flex flex-col justify-between">
+                <SpotlightCard
+                  key={idx}
+                  className="glass-card-3d rounded-3xl p-8 sm:p-10 space-y-6 flex flex-col justify-between"
+                >
                   <div className="space-y-4">
                     <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border ${
                       isDark ? 'text-blue-400 bg-blue-500/10 border-blue-500/20' : 'text-blue-700 bg-blue-50 border-blue-200'
@@ -488,45 +528,55 @@ const Home = () => {
                         </span>
                       ))}
                     </div>
-                    <Link to="/portfolio" className="inline-flex items-center space-x-2 text-xs text-blue-500 font-bold uppercase tracking-widest hover:text-blue-600 transition-colors">
+                    <Link to="/portfolio" className="inline-flex items-center space-x-2 text-xs text-blue-500 font-bold uppercase tracking-widest hover:text-blue-600 transition-colors group">
                       <span>Read Full Case Study</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
+                      <ExternalLink className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200" />
                     </Link>
                   </div>
-                </div>
+                </SpotlightCard>
               ))}
             </div>
           </div>
-        </section>
+        </motion.section>
 
         {/* FINAL CONVERSION CTA */}
-        <section className="py-32 relative z-10 px-6 sm:px-8 bg-contact-atmosphere">
+        <section className="py-20 sm:py-28 md:py-32 relative z-10 px-4 sm:px-6 lg:px-8 bg-contact-atmosphere">
           <div className="max-w-5xl mx-auto">
-            <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-tr from-blue-900 via-[#0B1021] to-indigo-900 border border-white/15 p-12 sm:p-16 text-center shadow-2xl space-y-8">
-              <div className="relative z-10 space-y-6">
-                <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              className="relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] bg-gradient-to-tr from-blue-950 via-[#0B1021] to-indigo-950 border border-white/15 p-8 sm:p-12 md:p-16 text-center shadow-2xl space-y-6 sm:space-y-8"
+            >
+              {/* Subtle background glow */}
+              <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+
+              <div className="relative z-10 space-y-4 sm:space-y-6">
+                <h2 className="cta-heading font-black tracking-tight">
                   Ready to Build Your Platform?
                 </h2>
-                <p className="text-slate-300 text-base sm:text-lg max-w-2xl mx-auto font-medium leading-relaxed">
+                <p className="text-slate-200 text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-medium leading-relaxed">
                   Connect directly with our software leads. We will map out your requirements, system architecture, and development timeline within 2 hours.
                 </p>
-                <div className="pt-4 flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                <div className="pt-2 sm:pt-4 flex flex-col sm:flex-row justify-center items-center gap-3.5 sm:gap-4">
                   <Link
                     to="/contact"
-                    className="btn-primary text-white font-bold text-base px-8 py-4 rounded-full flex items-center space-x-2 border border-blue-400/30 w-full sm:w-auto justify-center shadow-xl shadow-blue-500/30"
+                    className="btn-primary group text-white font-bold text-sm sm:text-base px-6 sm:px-8 py-3.5 sm:py-4 rounded-full flex items-center justify-center space-x-2 border border-blue-400/30 w-full sm:w-auto shadow-xl shadow-blue-500/30 active:scale-95 transition-all"
                   >
                     <span>Start Your Project</span>
-                    <ArrowRight className="w-5 h-5" />
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200 shrink-0" />
                   </Link>
                   <Link
                     to="/portfolio"
-                    className="btn-secondary text-white font-bold text-base px-8 py-4 rounded-full flex items-center justify-center w-full sm:w-auto"
+                    className="btn-secondary !text-white font-bold text-sm sm:text-base px-6 sm:px-8 py-3.5 sm:py-4 rounded-full flex items-center justify-center w-full sm:w-auto active:scale-95 transition-all !bg-white/10 hover:!bg-white/20 !border-white/20"
                   >
                     <span>Explore Case Studies</span>
                   </Link>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </section>
       </div>

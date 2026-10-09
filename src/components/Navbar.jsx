@@ -57,6 +57,8 @@ const Navbar = () => {
               <img
                 src="/logo.png"
                 alt="Shrayu Technologies Logo"
+                width="40"
+                height="40"
                 className="w-full h-full object-contain filter drop-shadow-md"
               />
             </div>
@@ -93,14 +95,14 @@ const Navbar = () => {
                   <NavLink
                     key={link.name}
                     to={link.path}
-                    className={`relative px-4 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
+                    className={`relative px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${
                       isActive
                         ? isDark
                           ? 'text-white font-bold'
                           : 'text-blue-600 font-bold'
                         : isDark
-                          ? 'text-slate-300 hover:text-white hover:bg-white/5'
-                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                          ? 'text-slate-300 hover:text-white hover:bg-white/10 hover:-translate-y-[1px]'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/80 hover:-translate-y-[1px]'
                     }`}
                   >
                     {isActive && (
@@ -108,10 +110,10 @@ const Navbar = () => {
                         layoutId="nav-active-pill"
                         className={`absolute inset-0 rounded-full border shadow-sm ${
                           isDark
-                            ? 'bg-blue-600/30 border-blue-500/40'
-                            : 'bg-white border-slate-200/80 shadow-sm'
+                            ? 'bg-blue-600/30 border-blue-500/50 shadow-inner shadow-blue-500/20'
+                            : 'bg-white border-slate-200 shadow-sm'
                         }`}
-                        transition={{ type: 'spring', stiffness: 400, damping: 32 }}
+                        transition={{ type: 'spring', stiffness: 450, damping: 35 }}
                       />
                     )}
                     <span className="relative z-10">{link.name}</span>
@@ -128,10 +130,10 @@ const Navbar = () => {
             {/* Desktop CTA Button */}
             <Link
               to="/contact"
-              className="ml-2 btn-primary text-white font-bold text-sm px-6 py-2.5 rounded-full flex items-center space-x-2 shadow-md shadow-blue-500/20 border border-blue-400/30"
+              className="ml-2 btn-primary group text-white font-bold text-sm px-6 py-2.5 rounded-full flex items-center space-x-2 shadow-md shadow-blue-500/20 border border-blue-400/30 active:scale-95 transition-all"
             >
               <span>Start Project</span>
-              <ArrowRight className="h-4 w-4" />
+              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-200" />
             </Link>
           </div>
 

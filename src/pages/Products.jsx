@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Github,
@@ -7,311 +7,573 @@ import {
   ChevronDown,
   ChevronUp,
   Sparkles,
-  BarChart3,
-  ShieldCheck
+  Brain,
+  Database,
+  Cpu,
+  Terminal,
+  Search,
+  ArrowUpRight,
+  FolderGit2,
+  Code2,
+  CheckCircle2,
+  RotateCcw
 } from 'lucide-react';
 import SEO from '../components/SEO';
 import { useTheme } from '../context/ThemeContext';
 import { useSkeleton } from '../context/SkeletonContext';
 import SkeletonWrapper from '../components/skeleton/SkeletonWrapper';
 import PortfolioSkeleton from '../components/skeleton/PortfolioSkeleton';
+import SpotlightCard from '../components/SpotlightCard';
+import { portfolioProjects, portfolioCategories } from '../data/portfolioProjects';
+
+const categoryConfig = {
+  AI: {
+    icon: Brain,
+    badgeDark: 'bg-purple-500/15 text-purple-300 border-purple-500/30',
+    badgeLight: 'bg-purple-50 text-purple-700 border-purple-200',
+    highlightDark: 'bg-purple-500/10 border-purple-500/20 text-purple-300',
+    highlightLight: 'bg-purple-50/80 border-purple-200 text-purple-800',
+    headerGradientDark: 'from-purple-950/40 via-purple-900/20 to-transparent',
+    headerGradientLight: 'from-purple-100/70 via-purple-50/30 to-transparent',
+    spotlight: 'rgba(168, 85, 247, 0.15)',
+    accentColor: 'text-purple-400'
+  },
+  'Data Science': {
+    icon: Database,
+    badgeDark: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30',
+    badgeLight: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+    highlightDark: 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300',
+    highlightLight: 'bg-emerald-50/80 border-emerald-200 text-emerald-800',
+    headerGradientDark: 'from-emerald-950/40 via-emerald-900/20 to-transparent',
+    headerGradientLight: 'from-emerald-100/70 via-emerald-50/30 to-transparent',
+    spotlight: 'rgba(16, 185, 129, 0.15)',
+    accentColor: 'text-emerald-400'
+  },
+  'Machine Learning': {
+    icon: Cpu,
+    badgeDark: 'bg-blue-500/15 text-blue-300 border-blue-500/30',
+    badgeLight: 'bg-blue-50 text-blue-700 border-blue-200',
+    highlightDark: 'bg-blue-500/10 border-blue-500/20 text-blue-300',
+    highlightLight: 'bg-blue-50/80 border-blue-200 text-blue-800',
+    headerGradientDark: 'from-blue-950/40 via-blue-900/20 to-transparent',
+    headerGradientLight: 'from-blue-100/70 via-blue-50/30 to-transparent',
+    spotlight: 'rgba(59, 130, 246, 0.15)',
+    accentColor: 'text-blue-400'
+  },
+  Python: {
+    icon: Terminal,
+    badgeDark: 'bg-amber-500/15 text-amber-300 border-amber-500/30',
+    badgeLight: 'bg-amber-50 text-amber-700 border-amber-200',
+    highlightDark: 'bg-amber-500/10 border-amber-500/20 text-amber-300',
+    highlightLight: 'bg-amber-50/80 border-amber-200 text-amber-800',
+    headerGradientDark: 'from-amber-950/40 via-amber-900/20 to-transparent',
+    headerGradientLight: 'from-amber-100/70 via-amber-50/30 to-transparent',
+    spotlight: 'rgba(245, 158, 11, 0.15)',
+    accentColor: 'text-amber-400'
+  },
+  'Full-Stack Development': {
+    icon: Layers,
+    badgeDark: 'bg-cyan-500/15 text-cyan-300 border-cyan-500/30',
+    badgeLight: 'bg-cyan-50 text-cyan-700 border-cyan-200',
+    highlightDark: 'bg-cyan-500/10 border-cyan-500/20 text-cyan-300',
+    highlightLight: 'bg-cyan-50/80 border-cyan-200 text-cyan-800',
+    headerGradientDark: 'from-cyan-950/40 via-cyan-900/20 to-transparent',
+    headerGradientLight: 'from-cyan-100/70 via-cyan-50/30 to-transparent',
+    spotlight: 'rgba(6, 182, 212, 0.15)',
+    accentColor: 'text-cyan-400'
+  }
+};
 
 const Products = () => {
-  const [expandedProject, setExpandedProject] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [expandedId, setExpandedId] = useState(null);
   const { isDark } = useTheme();
   const { isLoading } = useSkeleton();
 
-  const caseStudies = [
-    {
-      id: 'nexus',
-      title: 'Shrayu Nexus CRM Engine',
-      category: 'SaaS Platform & Enterprise Logic',
-      techStack: ['Next.js', 'FastAPI', 'PostgreSQL', 'Tailwind CSS', 'Docker'],
-      shortDesc: 'A high-performance CRM engine using real-time behavioral pipelines to analyze customer touchpoints.',
-      challenge: 'Legacy sales portals suffered slow database queries and failed to predict customer conversion signals in real-time.',
-      solution: 'We engineered Shrayu Nexus with a microservices architecture. It streams user activities over WebSockets and runs predictive pipeline modeling on the server edge.',
-      impact: '68% faster lead ingestion & +24.8% increase in deal conversion rates',
-      github: 'https://github.com/shrayutech',
-      demo: '#',
-      visualType: 'dashboard'
-    },
-    {
-      id: 'ledgercore',
-      title: 'LedgerCore Engine',
-      category: 'Open Source FinTech Core',
-      techStack: ['Go', 'gRPC', 'Redis', 'Kafka', 'Docker'],
-      shortDesc: 'An ultra-low latency transaction reconciliation engine featuring cryptographically signed audit logs.',
-      challenge: 'High-volume payment networks face race conditions and synchronization delays across regional database instances.',
-      solution: 'Constructed a Go-based transaction ledger processing up to 10,000 transactions per second, syncing database records through Redis pipelines and Kafka streams.',
-      impact: '0 reconciliation mismatches across 10,000 tx/sec continuous stress tests',
-      github: 'https://github.com/shrayutech',
-      demo: '#',
-      visualType: 'code'
-    },
-    {
-      id: 'decentraspace',
-      title: 'Decentraspace Portal',
-      category: 'Web Platform & Concept Design',
-      techStack: ['React', 'Framer Motion', 'Web3.js', 'Ethers.js', 'Solidity'],
-      shortDesc: 'A glassmorphic portfolio management portal representing automated asset tracking.',
-      challenge: 'Interacting with decentralized multi-chain accounts is visually overwhelming and lacks direct asset performance insights.',
-      solution: 'We crafted an immersive glassmorphic interface built on top of Ethers.js. It visualizes portfolio balances across chains using interactive SVG sparklines and custom CSS variables.',
-      impact: 'Sub-100ms multi-chain wallet data sync & unified gas fee estimation',
-      github: 'https://github.com/shrayutech',
-      demo: '#',
-      visualType: 'design'
-    },
-    {
-      id: 'velocdn',
-      title: 'VeloCDN Engine',
-      category: 'Edge Infrastructure Project',
-      techStack: ['Rust', 'WebAssembly', 'Cloudflare Workers', 'Redis'],
-      shortDesc: 'An edge cache distribution system targeting content invalidation in under 150ms.',
-      challenge: 'Standard global CDNs take minutes to distribute static assets or update edge parameters globally.',
-      solution: 'A CDN script built in Rust and compiled to WebAssembly. It runs at the edge inside Cloudflare Workers, fetching key-value data instantly.',
-      impact: '150ms global cache invalidation time across worldwide nodes',
-      github: 'https://github.com/shrayutech',
-      demo: '#',
-      visualType: 'terminal'
-    }
-  ];
+  // Category counts
+  const categoryCounts = useMemo(() => {
+    const counts = { All: portfolioProjects.length };
+    portfolioCategories.forEach((cat) => {
+      if (cat !== 'All') {
+        counts[cat] = portfolioProjects.filter((p) => p.category === cat).length;
+      }
+    });
+    return counts;
+  }, []);
+
+  // Filtered projects
+  const filteredProjects = useMemo(() => {
+    return portfolioProjects.filter((project) => {
+      const matchesCategory =
+        selectedCategory === 'All' || project.category === selectedCategory;
+
+      if (!matchesCategory) return false;
+
+      if (!searchQuery.trim()) return true;
+
+      const query = searchQuery.toLowerCase().trim();
+      const titleMatch = project.title.toLowerCase().includes(query);
+      const descMatch = project.description.toLowerCase().includes(query);
+      const highlightMatch = project.highlight.toLowerCase().includes(query);
+      const techMatch = project.techStack.some((tech) =>
+        tech.toLowerCase().includes(query)
+      );
+
+      return titleMatch || descMatch || highlightMatch || techMatch;
+    });
+  }, [selectedCategory, searchQuery]);
 
   const toggleExpand = (id) => {
-    if (expandedProject === id) {
-      setExpandedProject(null);
-    } else {
-      setExpandedProject(id);
-    }
+    setExpandedId((prev) => (prev === id ? null : id));
+  };
+
+  const handleResetFilters = () => {
+    setSelectedCategory('All');
+    setSearchQuery('');
   };
 
   return (
     <SkeletonWrapper loading={isLoading} skeleton={<PortfolioSkeleton />}>
-      <div className="relative min-h-screen bg-portfolio-atmosphere pt-36 pb-32 px-6 sm:px-8 overflow-hidden transition-colors duration-300">
+      <div className="relative min-h-screen bg-portfolio-atmosphere pt-36 pb-32 px-4 sm:px-6 lg:px-8 overflow-hidden transition-colors duration-300">
         <SEO
-          title="Portfolio & Case Studies"
-          description="Discover Shrayu Technologies software engineering case studies, technical architecture solutions, and open-source contributions."
-          keywords="case studies, software engineering portfolio, Go backend, Rust CDN, Next.js SaaS, microservices architecture"
+          title="Portfolio & Engineering Projects — Shrayu Technologies"
+          description="Explore 25 verified systems across AI, Data Science, Machine Learning, Python automation, and Full-Stack development from Shrayu Technologies."
+          keywords="AI systems, machine learning portfolio, data science projects, Python automation, Full Stack MERN, Shrayu Technologies, open source"
         />
 
         {/* ATMOSPHERE OVERLAYS */}
-        <div className="absolute inset-0 bg-blueprint-mesh opacity-20 pointer-events-none"></div>
-        <div className="absolute inset-0 noise-overlay pointer-events-none"></div>
+        <div className="absolute inset-0 bg-blueprint-mesh opacity-20 pointer-events-none" />
+        <div className="absolute inset-0 noise-overlay pointer-events-none" />
 
-        <div className="max-w-6xl mx-auto relative z-10 space-y-20">
-          {/* Header Section */}
-          <div className="text-center max-w-3xl mx-auto space-y-6">
+        <div className="max-w-7xl mx-auto relative z-10 space-y-12 sm:space-y-16">
+          {/* ========================================================= */}
+          {/* HEADER SECTION */}
+          {/* ========================================================= */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="text-center max-w-4xl mx-auto space-y-6"
+          >
             <div className="inline-flex items-center space-x-2 bg-blue-500/10 border border-blue-500/30 px-4 py-1.5 rounded-full text-blue-500 text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-lg shadow-blue-500/10">
               <Sparkles className="w-3.5 h-3.5" />
-              <span>Engineering Showcase</span>
+              <span>Engineering Showcase & Verified Work</span>
             </div>
-            <h1 className={`text-4xl sm:text-5xl md:text-6xl font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+
+            <h1
+              className={`text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight ${
+                isDark ? 'text-white' : 'text-slate-900'
+              }`}
+            >
               Case Studies &{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-indigo-500 to-cyan-500">
-                Engineering Work
+              <span className="gradient-text-animated">
+                Engineering Portfolio
               </span>
             </h1>
-            <p className={`text-base sm:text-lg font-medium leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
-              Real-world technical solutions, open-source projects, and high-performance system architectures built by our engineering team.
+
+            <p
+              className={`text-base sm:text-lg font-medium leading-relaxed max-w-3xl mx-auto ${
+                isDark ? 'text-slate-300' : 'text-slate-600'
+              }`}
+            >
+              Explore 25 verified production-grade systems across AI, Data Science,
+              Machine Learning, Python automation, and Full-Stack engineering,
+              architected with clean modular code and published open-source.
             </p>
-          </div>
 
-          {/* Case Study List */}
-          <div className="space-y-10">
-            {caseStudies.map((study) => (
-              <div
-                key={study.id}
-                className="glass-card-3d rounded-3xl overflow-hidden shadow-2xl"
+            {/* Profile Pill & Stats Row */}
+            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
+              <a
+                href="https://github.com/Saru2248?tab=repositories"
+                target="_blank"
+                rel="noreferrer"
+                className={`inline-flex items-center space-x-2 px-4 py-2 rounded-full text-xs font-bold border transition-all duration-200 hover:-translate-y-0.5 shadow-sm ${
+                  isDark
+                    ? 'bg-slate-900/80 border-slate-700 text-slate-200 hover:text-white hover:border-blue-500/50 hover:bg-slate-800'
+                    : 'bg-white border-slate-300 text-slate-700 hover:text-blue-600 hover:border-blue-400 hover:bg-slate-50'
+                }`}
+                title="View GitHub Repositories"
               >
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 p-8 sm:p-10 items-center">
-                  {/* Visual Preview Window (Left 5 Cols) */}
-                  <div className="lg:col-span-5 w-full">
-                    {study.visualType === 'dashboard' && (
-                      <div className="bg-[#1e293b] border border-slate-700 rounded-2xl p-5 font-sans text-slate-300 text-xs space-y-4 shadow-2xl">
-                        <div className="flex justify-between items-center pb-3 border-b border-slate-700">
-                          <div className="flex space-x-1.5">
-                            <div className="w-2.5 h-2.5 rounded-full bg-rose-500"></div>
-                            <div className="w-2.5 h-2.5 rounded-full bg-amber-500"></div>
-                            <div className="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
-                          </div>
-                          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">nexus-crm</span>
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div className="p-3.5 bg-[#111827] rounded-xl space-y-1 border border-slate-800">
-                            <span className="text-slate-400 text-[9px] font-bold uppercase tracking-wider block">Lead Conversion</span>
-                            <span className="text-base font-extrabold text-white">+24.8%</span>
-                          </div>
-                          <div className="p-3.5 bg-[#111827] rounded-xl space-y-1 border border-slate-800">
-                            <span className="text-slate-400 text-[9px] font-bold uppercase tracking-wider block">Active Pipeline</span>
-                            <span className="text-base font-extrabold text-blue-400">18 Active</span>
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                <FolderGit2 className="w-4 h-4 text-blue-500" />
+                <span>github.com/Saru2248</span>
+                <ArrowUpRight className="w-3.5 h-3.5 opacity-70" />
+              </a>
 
-                    {study.visualType === 'code' && (
-                      <div className="bg-[#090d16] border border-slate-800 rounded-2xl p-5 font-mono text-[11px] text-slate-300 leading-relaxed shadow-2xl overflow-hidden">
-                        <div className="flex justify-between items-center mb-3 border-b border-slate-800 pb-2 text-[10px]">
-                          <span className="text-slate-400 font-bold">reconcile.go</span>
-                          <span className="text-green-400 font-semibold">Go Core</span>
-                        </div>
-                        <div className="space-y-1.5">
-                          <div><span className="text-purple-400">func</span> <span className="text-blue-400">Reconcile</span>(tx *Transaction) &#123;</div>
-                          <div>  log := crypt.<span className="text-indigo-400">Sign</span>(tx.<span className="text-slate-300">Hash</span>)</div>
-                          <div>  db.<span className="text-indigo-400">Save</span>(tx)</div>
-                          <div>&#125;</div>
-                        </div>
-                      </div>
-                    )}
+              <div
+                className={`inline-flex items-center space-x-2 px-3.5 py-2 rounded-full text-xs font-semibold border ${
+                  isDark
+                    ? 'bg-white/5 border-white/10 text-slate-300'
+                    : 'bg-slate-100 border-slate-200 text-slate-700'
+                }`}
+              >
+                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
+                <span>25 Matched Repositories</span>
+              </div>
+            </div>
+          </motion.div>
 
-                    {study.visualType === 'design' && (
-                      <div className="bg-gradient-to-tr from-blue-900 to-indigo-900 border border-slate-700 rounded-2xl p-6 flex flex-col items-center justify-center space-y-3 shadow-2xl text-center h-40">
-                        <Layers className="w-9 h-9 text-cyan-400 animate-pulse" />
-                        <div className="space-y-1">
-                          <span className="text-white font-bold text-sm">Automated Gas Optimizer</span>
-                          <span className="text-slate-300 text-xs block font-medium">Interactive Web3 Wallet UI</span>
-                        </div>
-                      </div>
-                    )}
-
-                    {study.visualType === 'terminal' && (
-                      <div className="bg-[#030712] border border-slate-800 rounded-2xl p-5 font-mono text-[11px] text-emerald-400 leading-relaxed shadow-2xl overflow-hidden">
-                        <div className="flex space-x-1.5 mb-3">
-                          <div className="w-2.5 h-2.5 rounded-full bg-rose-500"></div>
-                          <div className="w-2.5 h-2.5 rounded-full bg-amber-500"></div>
-                          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
-                        </div>
-                        <div>$ cargo build --release</div>
-                        <div className="text-slate-400">   Compiling velocdn-engine v1.0.0</div>
-                        <div className="text-slate-400">    Finished release target in 2.45s</div>
-                        <div>$ ./velocdn-engine --port 8080</div>
-                        <div className="text-blue-400">[info] Edge server active. Latency: 14ms.</div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Case Study Details (Right 7 Cols) */}
-                  <div className="lg:col-span-7 space-y-6">
-                    <div className="space-y-2">
-                      <span className="text-xs text-blue-500 font-bold uppercase tracking-wider block">
-                        {study.category}
-                      </span>
-                      <h2 className={`text-2xl sm:text-3xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{study.title}</h2>
-                      <p className={`text-sm leading-relaxed font-medium ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
-                        {study.shortDesc}
-                      </p>
-                    </div>
-
-                    {/* Business Impact Box */}
-                    <div className={`p-4 rounded-2xl flex items-center space-x-3 font-bold text-xs border ${
+          {/* ========================================================= */}
+          {/* FILTERING & SEARCH CONTROLS */}
+          {/* ========================================================= */}
+          <div className="space-y-6">
+            {/* Search Input Bar */}
+            <div className="max-w-md mx-auto">
+              <div
+                className={`relative flex items-center rounded-2xl border transition-all duration-200 shadow-sm ${
+                  isDark
+                    ? 'bg-slate-900/60 border-slate-800 focus-within:border-blue-500/60 focus-within:ring-2 focus-within:ring-blue-500/20'
+                    : 'bg-white border-slate-300 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20'
+                }`}
+              >
+                <Search
+                  className={`w-4 h-4 ml-4 shrink-0 ${
+                    isDark ? 'text-slate-400' : 'text-slate-500'
+                  }`}
+                />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Filter by title, stack (e.g. React, XGBoost, A*)..."
+                  className={`w-full py-3 px-3 text-xs sm:text-sm bg-transparent border-0 focus:outline-none ${
+                    isDark
+                      ? 'text-white placeholder-slate-500'
+                      : 'text-slate-900 placeholder-slate-400'
+                  }`}
+                  aria-label="Filter portfolio projects"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className={`mr-3 p-1 rounded-lg text-xs font-semibold transition-colors ${
                       isDark
-                        ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-                        : 'bg-emerald-50 border-emerald-200 text-emerald-700'
-                    }`}>
-                      <BarChart3 className="w-5 h-5 shrink-0" />
-                      <span>Business Impact: {study.impact}</span>
-                    </div>
+                        ? 'text-slate-400 hover:text-white hover:bg-slate-800'
+                        : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+                    }`}
+                    title="Clear search"
+                  >
+                    Clear
+                  </button>
+                )}
+              </div>
+            </div>
 
-                    {/* Technology badges */}
-                    <div className="flex flex-wrap gap-2">
-                      {study.techStack.map((tech, idx) => (
-                        <span
-                          key={idx}
-                          className={`px-3 py-1 rounded-md font-bold text-[10px] uppercase tracking-wider border ${
-                            isDark
-                              ? 'bg-white/5 border-white/10 text-slate-300'
-                              : 'bg-slate-100 border-slate-200 text-slate-700'
-                          }`}
-                        >
-                          {tech}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* Action Buttons */}
-                    <div className="flex items-center space-x-4 pt-2">
-                      <button
-                        onClick={() => toggleExpand(study.id)}
-                        className="btn-secondary text-xs font-bold px-4 py-2.5 rounded-xl flex items-center space-x-2"
-                      >
-                        <span>Architecture Deep Dive</span>
-                        {expandedProject === study.id ? (
-                          <ChevronUp className="w-4 h-4" />
-                        ) : (
-                          <ChevronDown className="w-4 h-4" />
-                        )}
-                      </button>
-
-                      <a
-                        href={study.github}
-                        target="_blank"
-                        rel="noreferrer"
-                        className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
-                          isDark
-                            ? 'bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-white/10'
-                            : 'bg-slate-100 border border-slate-200 text-slate-700 hover:text-blue-600 hover:bg-slate-200'
-                        }`}
-                        title="GitHub Repository"
-                        aria-label="GitHub Repository"
-                      >
-                        <Github className="w-4 h-4" />
-                      </a>
-
-                      {study.demo !== '#' && (
-                        <a
-                          href={study.demo}
-                          target="_blank"
-                          rel="noreferrer"
-                          className={`w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
-                            isDark
-                              ? 'bg-white/5 border border-white/10 text-slate-300 hover:text-white hover:bg-white/10'
-                              : 'bg-slate-100 border border-slate-200 text-slate-700 hover:text-blue-600 hover:bg-slate-200'
-                          }`}
-                          title="Live Demo"
-                          aria-label="Live Demo"
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Collapsible Architecture Details */}
-                <AnimatePresence>
-                  {expandedProject === study.id && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                      className={`border-t overflow-hidden ${
-                        isDark
-                          ? 'border-white/10 bg-black/40'
-                          : 'border-slate-200 bg-slate-50/80'
+            {/* Category Filter Tabs */}
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5">
+              {portfolioCategories.map((category) => {
+                const isActive = selectedCategory === category;
+                const count = categoryCounts[category] || 0;
+                return (
+                  <button
+                    key={category}
+                    onClick={() => setSelectedCategory(category)}
+                    className={`relative inline-flex items-center space-x-2 px-3.5 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all duration-200 cursor-pointer active:scale-95 ${
+                      isActive
+                        ? isDark
+                          ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/30 border border-blue-500'
+                          : 'bg-blue-600 text-white shadow-lg shadow-blue-600/20 border border-blue-700'
+                        : isDark
+                        ? 'bg-slate-900/60 border border-slate-800 text-slate-300 hover:bg-slate-800 hover:text-white'
+                        : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:text-slate-900'
+                    }`}
+                  >
+                    <span>{category}</span>
+                    <span
+                      className={`text-[10px] font-black px-1.5 py-0.5 rounded-full ${
+                        isActive
+                          ? 'bg-white/25 text-white'
+                          : isDark
+                          ? 'bg-white/10 text-slate-400'
+                          : 'bg-slate-100 text-slate-600'
                       }`}
                     >
-                      <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8 text-sm">
-                        <div className="space-y-2">
-                          <h3 className="text-blue-500 font-bold text-xs uppercase tracking-wider flex items-center space-x-1.5">
-                            <ShieldCheck className="w-4 h-4" />
-                            <span>The Challenge Solved</span>
-                          </h3>
-                          <p className={`leading-relaxed text-xs font-medium ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>{study.challenge}</p>
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Active Query Status */}
+            <div className="flex items-center justify-between text-xs px-2 text-slate-500 dark:text-slate-400 max-w-6xl mx-auto">
+              <span>
+                Showing{' '}
+                <strong
+                  className={isDark ? 'text-slate-200' : 'text-slate-800'}
+                >
+                  {filteredProjects.length}
+                </strong>{' '}
+                of {portfolioProjects.length} projects
+                {selectedCategory !== 'All' && ` in ${selectedCategory}`}
+              </span>
+
+              {(selectedCategory !== 'All' || searchQuery) && (
+                <button
+                  onClick={handleResetFilters}
+                  className="inline-flex items-center space-x-1 text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 font-semibold cursor-pointer"
+                >
+                  <RotateCcw className="w-3 h-3" />
+                  <span>Reset filters</span>
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* ========================================================= */}
+          {/* PROJECTS GRID */}
+          {/* ========================================================= */}
+          {filteredProjects.length === 0 ? (
+            <div
+              className={`text-center py-20 px-6 rounded-3xl border ${
+                isDark
+                  ? 'bg-slate-900/40 border-slate-800 text-slate-400'
+                  : 'bg-slate-50 border-slate-200 text-slate-600'
+              }`}
+            >
+              <Code2 className="w-12 h-12 mx-auto mb-4 opacity-40 text-blue-500" />
+              <h2
+                className={`text-lg font-bold ${
+                  isDark ? 'text-white' : 'text-slate-900'
+                }`}
+              >
+                No projects matched your filter
+              </h2>
+              <p className="text-xs sm:text-sm mt-1 max-w-sm mx-auto">
+                Try searching for a different keyword or switch to another category.
+              </p>
+              <button
+                onClick={handleResetFilters}
+                className="mt-5 btn-primary text-xs font-bold px-4 py-2 rounded-xl"
+              >
+                Reset All Filters
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+              {filteredProjects.map((project, idx) => {
+                const config =
+                  categoryConfig[project.category] || categoryConfig.AI;
+                const IconComponent = config.icon;
+                const isExpanded = expandedId === project.id;
+
+                return (
+                  <motion.div
+                    key={project.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true, margin: '-40px' }}
+                    transition={{
+                      duration: 0.5,
+                      delay: Math.min((idx % 3) * 0.1, 0.3),
+                      ease: [0.16, 1, 0.3, 1]
+                    }}
+                    className="flex flex-col h-full"
+                  >
+                    <SpotlightCard
+                      spotlightColor={config.spotlight}
+                      className={`glass-card-3d rounded-3xl overflow-hidden border shadow-xl flex flex-col h-full transition-all duration-300 hover:-translate-y-1 ${
+                        isDark
+                          ? 'border-white/10 bg-[#0F1728]/80 hover:border-white/20'
+                          : 'border-slate-200 bg-white hover:border-blue-200 hover:shadow-2xl'
+                      }`}
+                    >
+                      {/* CARD TOP DECORATIVE HEADER */}
+                      <div
+                        className={`p-5 sm:p-6 bg-gradient-to-b border-b flex items-center justify-between ${
+                          isDark
+                            ? `${config.headerGradientDark} border-white/5`
+                            : `${config.headerGradientLight} border-slate-100`
+                        }`}
+                      >
+                        <div className="flex items-center space-x-2.5">
+                          <div
+                            className={`w-9 h-9 rounded-xl flex items-center justify-center border shadow-sm ${
+                              isDark
+                                ? 'bg-slate-900/80 border-white/10 text-white'
+                                : 'bg-white border-slate-200 text-slate-800'
+                            }`}
+                          >
+                            <IconComponent className={`w-4 h-4 ${config.accentColor}`} />
+                          </div>
+                          <span
+                            className={`px-2.5 py-1 rounded-lg text-[11px] font-bold uppercase tracking-wider border ${
+                              isDark ? config.badgeDark : config.badgeLight
+                            }`}
+                          >
+                            {project.category}
+                          </span>
                         </div>
-                        <div className="space-y-2">
-                          <h3 className="text-indigo-500 font-bold text-xs uppercase tracking-wider flex items-center space-x-1.5">
-                            <Layers className="w-4 h-4" />
-                            <span>The Engineering Solution</span>
-                          </h3>
-                          <p className={`leading-relaxed text-xs font-medium ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>{study.solution}</p>
+
+                        <span
+                          className={`text-[11px] font-mono font-bold px-2 py-0.5 rounded-md ${
+                            isDark
+                              ? 'bg-white/5 text-slate-400'
+                              : 'bg-slate-100 text-slate-600'
+                          }`}
+                        >
+                          #{String(project.id).padStart(2, '0')}
+                        </span>
+                      </div>
+
+                      {/* CARD MAIN CONTENT */}
+                      <div className="p-6 sm:p-7 flex-1 flex flex-col space-y-4">
+                        {/* Title */}
+                        <div>
+                          <h2
+                            className={`text-lg sm:text-xl font-extrabold tracking-tight leading-snug break-words transition-colors ${
+                              isDark
+                                ? 'text-white group-hover:text-blue-300'
+                                : 'text-slate-900 group-hover:text-blue-600'
+                            }`}
+                          >
+                            {project.title}
+                          </h2>
+                        </div>
+
+                        {/* Highlight Banner */}
+                        <div
+                          className={`p-3 rounded-xl border text-xs font-semibold leading-relaxed flex items-start space-x-2 ${
+                            isDark ? config.highlightDark : config.highlightLight
+                          }`}
+                        >
+                          <Sparkles className="w-3.5 h-3.5 shrink-0 mt-0.5 opacity-80" />
+                          <span>{project.highlight}</span>
+                        </div>
+
+                        {/* Professional Verified Description */}
+                        <p
+                          className={`text-xs sm:text-sm font-medium leading-relaxed flex-1 ${
+                            isDark ? 'text-slate-300' : 'text-slate-600'
+                          }`}
+                        >
+                          {project.description}
+                        </p>
+
+                        {/* Tech Stack Badges */}
+                        <div className="pt-2">
+                          <div className="flex flex-wrap gap-1.5">
+                            {project.techStack.map((tech, tIdx) => (
+                              <span
+                                key={tIdx}
+                                className={`px-2.5 py-1 rounded-md text-[10px] font-bold tracking-wide uppercase border transition-colors ${
+                                  isDark
+                                    ? 'bg-white/5 border-white/10 text-slate-300 group-hover:border-blue-500/30'
+                                    : 'bg-slate-100 border-slate-200 text-slate-700 group-hover:border-blue-200'
+                                }`}
+                              >
+                                {tech}
+                              </span>
+                            ))}
+                          </div>
                         </div>
                       </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            ))}
-          </div>
+
+                      {/* CARD FOOTER ACTIONS */}
+                      <div
+                        className={`p-5 sm:p-6 pt-4 border-t mt-auto flex items-center justify-between gap-3 ${
+                          isDark
+                            ? 'border-white/5 bg-slate-900/40'
+                            : 'border-slate-100 bg-slate-50/60'
+                        }`}
+                      >
+                        {/* Primary GitHub Link */}
+                        <a
+                          href={project.githubUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex-1 inline-flex items-center justify-center space-x-2 px-3.5 py-2.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-600/20 transition-all duration-200 active:scale-95 group/btn"
+                          title="Open GitHub Repository"
+                        >
+                          <Github className="w-4 h-4 shrink-0" />
+                          <span>GitHub Repo</span>
+                          <ArrowUpRight className="w-3.5 h-3.5 opacity-70 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+                        </a>
+
+                        {/* Conditional Live Demo Button */}
+                        {project.demoUrl ? (
+                          <a
+                            href={project.demoUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className={`inline-flex items-center justify-center space-x-1.5 px-3 py-2.5 rounded-xl text-xs font-bold border transition-all duration-200 active:scale-95 ${
+                              isDark
+                                ? 'bg-white/5 border-white/10 text-slate-200 hover:bg-white/10 hover:text-white hover:border-blue-400'
+                                : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-blue-600 hover:border-blue-300'
+                            }`}
+                            title="Open Live Demo"
+                          >
+                            <ExternalLink className="w-3.5 h-3.5 shrink-0" />
+                            <span>Demo</span>
+                          </a>
+                        ) : null}
+
+                        {/* Repo Details Drawer Toggle */}
+                        <button
+                          onClick={() => toggleExpand(project.id)}
+                          className={`w-9 h-9 rounded-xl flex items-center justify-center border transition-all duration-200 active:scale-95 shrink-0 cursor-pointer ${
+                            isDark
+                              ? 'bg-white/5 border-white/10 text-slate-400 hover:text-white hover:bg-white/10'
+                              : 'bg-white border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+                          }`}
+                          title="Repository Details"
+                          aria-label="Toggle repository details"
+                        >
+                          {isExpanded ? (
+                            <ChevronUp className="w-4 h-4" />
+                          ) : (
+                            <ChevronDown className="w-4 h-4" />
+                          )}
+                        </button>
+                      </div>
+
+                      {/* Expandable Architecture Drawer */}
+                      <AnimatePresence>
+                        {isExpanded && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.25 }}
+                            className={`border-t overflow-hidden text-xs ${
+                              isDark
+                                ? 'border-white/10 bg-black/50 text-slate-300'
+                                : 'border-slate-200 bg-slate-100/90 text-slate-700'
+                            }`}
+                          >
+                            <div className="p-5 space-y-3 font-mono">
+                              <div>
+                                <span className="text-[10px] text-slate-500 uppercase tracking-wider block font-sans font-bold">
+                                  Repository Name
+                                </span>
+                                <span className="text-blue-400 break-all">
+                                  Saru2248/{project.repo}
+                                </span>
+                              </div>
+                              <div>
+                                <span className="text-[10px] text-slate-500 uppercase tracking-wider block font-sans font-bold">
+                                  Domain Category
+                                </span>
+                                <span>{project.category}</span>
+                              </div>
+                              <div>
+                                <span className="text-[10px] text-slate-500 uppercase tracking-wider block font-sans font-bold">
+                                  Architecture Visual Class
+                                </span>
+                                <span className="text-emerald-400">
+                                  {project.visualType}
+                                </span>
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </SpotlightCard>
+                  </motion.div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </SkeletonWrapper>
