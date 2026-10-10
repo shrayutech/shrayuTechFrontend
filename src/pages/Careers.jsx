@@ -1,8 +1,13 @@
-import { Briefcase, MapPin, Clock, ArrowRight, HeartPulse, GraduationCap, Laptop, Plane } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Briefcase, MapPin, Clock, ArrowRight, HeartPulse, GraduationCap, Laptop, Plane, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
+import { useTheme } from '../context/ThemeContext';
+import SpotlightCard from '../components/SpotlightCard';
 
 const Careers = () => {
+  const { isDark } = useTheme();
+
   const openPositions = [
     {
       id: 1,
@@ -22,7 +27,7 @@ const Careers = () => {
     },
     {
       id: 3,
-      title: "DevOps specialist",
+      title: "DevOps Specialist",
       department: "Infrastructure",
       location: "New York, NY (On-site)",
       type: "Full-Time",
@@ -62,107 +67,164 @@ const Careers = () => {
   ];
 
   return (
-    <div className="bg-slate-50 min-h-screen pt-12 pb-24">
-      <SEO 
+    <div className="relative min-h-screen bg-services-atmosphere pt-36 pb-32 px-6 sm:px-8 overflow-hidden transition-colors duration-300">
+      <SEO
         title="Careers"
         description="Join Shrayu Technologies and help us build the digital future. Explore open positions in engineering, design, and product management."
         keywords="careers at Shrayu Technologies, job openings, software engineering jobs, UI/UX design jobs, tech careers"
       />
-      {/* Hero Section */}
-      <div className="bg-slate-900 text-white py-24 mb-20 relative overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <div className="absolute -top-24 right-0 w-96 h-96 bg-blue-600 rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
-          <div className="absolute -bottom-24 left-1/4 w-80 h-80 bg-teal-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
-        </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight">
-            Build the Future With Us
+
+      {/* ATMOSPHERE OVERLAYS */}
+      <div className="absolute inset-0 bg-blueprint-mesh opacity-20 pointer-events-none"></div>
+      <div className="absolute inset-0 noise-overlay pointer-events-none"></div>
+
+      <div className="max-w-6xl mx-auto relative z-10 space-y-24">
+        {/* Hero Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center max-w-3xl mx-auto space-y-6"
+        >
+          <div className="inline-flex items-center space-x-2 bg-blue-500/10 border border-blue-500/30 px-4 py-1.5 rounded-full text-blue-500 text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-lg shadow-blue-500/10">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>Join Our Engineering Collective</span>
+          </div>
+          <h1 className={`text-4xl sm:text-5xl md:text-6xl font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
+            Build the Future{' '}
+            <span className="gradient-text-animated">
+              With Us
+            </span>
           </h1>
-          <p className="text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto font-light leading-relaxed mb-10">
+          <p className={`text-base sm:text-lg font-medium leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
             Join a culture of continuous innovation. We are looking for brilliant minds to help us solve the world's most complex technical challenges.
           </p>
-          <a href="#positions" className="inline-flex items-center px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-full font-bold text-lg transition-all shadow-lg hover:shadow-blue-500/50">
-            View Open Positions
-          </a>
-        </div>
-      </div>
+          <div className="pt-2">
+            <a
+              href="#positions"
+              className="btn-primary group text-white font-bold text-base px-8 py-4 rounded-full inline-flex items-center space-x-2 border border-blue-400/30 shadow-xl shadow-blue-500/30 active:scale-95 transition-all"
+            >
+              <span>View Open Positions</span>
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
+            </a>
+          </div>
+        </motion.div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Benefits Section */}
-        <div className="mb-24">
-          <div className="text-center max-w-3xl mx-auto mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Why Shrayu Technologies?</h2>
-            <p className="text-lg text-slate-600">We invest heavily in our team. Your well-being and professional growth are our top priorities.</p>
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="space-y-12"
+        >
+          <div className="text-center max-w-3xl mx-auto space-y-3">
+            <span className="text-blue-500 font-bold text-xs uppercase tracking-[0.2em]">Culture & Perks</span>
+            <h2 className={`text-3xl sm:text-4xl font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>Why Shrayu Technologies?</h2>
+            <p className={`text-sm sm:text-base font-medium ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+              We invest heavily in our team. Your well-being, creative autonomy, and professional growth are our top priorities.
+            </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {benefits.map((benefit, index) => (
-              <div key={index} className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-300 group">
-                <div className="bg-slate-50 w-16 h-16 flex items-center justify-center rounded-2xl mb-6 group-hover:scale-110 transition-transform">
+              <SpotlightCard key={index} className="glass-card-3d rounded-3xl p-8 space-y-4">
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 ${
+                  isDark ? 'bg-white/5 border border-white/10' : 'bg-slate-100 border border-slate-200'
+                }`}>
                   {benefit.icon}
                 </div>
-                <h3 className="text-xl font-bold text-slate-900 mb-3">{benefit.title}</h3>
-                <p className="text-slate-600 leading-relaxed text-sm">
+                <h3 className={`text-xl font-bold transition-colors ${isDark ? 'text-white group-hover:text-blue-400' : 'text-slate-900 group-hover:text-blue-600'}`}>
+                  {benefit.title}
+                </h3>
+                <p className={`text-xs font-semibold leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
                   {benefit.description}
                 </p>
-              </div>
+              </SpotlightCard>
             ))}
           </div>
-        </div>
+        </motion.div>
 
         {/* Job Listings */}
-        <div id="positions" className="scroll-mt-24">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-12">
+        <motion.div
+          id="positions"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="scroll-mt-28 space-y-10"
+        >
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 border-b pb-6 border-white/10">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-2">Open Positions</h2>
-              <p className="text-slate-600">Shape the next generation of enterprise software.</p>
+              <span className="text-blue-500 font-bold text-xs uppercase tracking-[0.2em] block mb-1">Opportunities</span>
+              <h2 className={`text-3xl sm:text-4xl font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>Open Positions</h2>
             </div>
-            <div className="mt-4 md:mt-0 text-slate-500 text-sm font-medium">
+            <div className={`text-xs font-bold uppercase tracking-wider ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
               Showing {openPositions.length} available roles
             </div>
           </div>
 
           <div className="space-y-6">
             {openPositions.map((job) => (
-              <div key={job.id} className="bg-white rounded-2xl p-6 md:p-8 border border-slate-200 shadow-sm hover:shadow-md hover:border-blue-300 transition-all group flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-3 mb-2">
-                    <span className="px-3 py-1 bg-blue-100 text-blue-700 text-xs font-bold uppercase tracking-wider rounded-full">
+              <SpotlightCard
+                key={job.id}
+                className="glass-card-3d rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6"
+              >
+                <div className="flex-1 space-y-3">
+                  <div className="flex items-center space-x-3">
+                    <span className={`px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full border ${
+                      isDark ? 'bg-blue-500/10 border-blue-500/20 text-blue-400' : 'bg-blue-50 border-blue-200 text-blue-700'
+                    }`}>
                       {job.department}
                     </span>
-                    <span className="px-3 py-1 bg-slate-100 text-slate-700 text-xs font-bold uppercase tracking-wider rounded-full">
+                    <span className={`px-3 py-1 text-[10px] font-bold uppercase tracking-wider rounded-full border ${
+                      isDark ? 'bg-white/5 border-white/10 text-slate-300' : 'bg-slate-100 border-slate-200 text-slate-700'
+                    }`}>
                       {job.type}
                     </span>
                   </div>
-                  <h3 className="text-2xl font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">
+                  <h3 className={`text-2xl font-bold transition-colors ${isDark ? 'text-white group-hover:text-blue-400' : 'text-slate-900 group-hover:text-blue-600'}`}>
                     {job.title}
                   </h3>
-                  <div className="flex flex-col sm:flex-row sm:space-x-4 text-slate-500 text-sm mb-4">
-                    <span className="flex items-center mt-1 sm:mt-0"><MapPin className="h-4 w-4 mr-1 text-slate-400" /> {job.location}</span>
-                    <span className="flex items-center mt-1 sm:mt-0"><Clock className="h-4 w-4 mr-1 text-slate-400" /> Full-time</span>
+                  <div className={`flex flex-col sm:flex-row sm:space-x-4 text-xs font-semibold ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                    <span className="flex items-center mt-1 sm:mt-0"><MapPin className="h-3.5 w-3.5 mr-1 text-blue-500" /> {job.location}</span>
+                    <span className="flex items-center mt-1 sm:mt-0"><Clock className="h-3.5 w-3.5 mr-1 text-indigo-500" /> Full-time</span>
                   </div>
-                  <p className="text-slate-600 text-sm max-w-3xl">
+                  <p className={`text-xs font-medium max-w-3xl leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
                     {job.description}
                   </p>
                 </div>
                 <div>
-                  <Link to={`/contact?subject=Application for ${job.title}`} className="inline-flex items-center justify-center w-full md:w-auto px-6 py-3 bg-slate-900 hover:bg-blue-600 text-white rounded-xl font-medium transition-colors">
-                    Apply Now <ArrowRight className="ml-2 h-4 w-4" />
+                  <Link
+                    to={`/contact?subject=Application for ${job.title}`}
+                    className="btn-primary group w-full md:w-auto px-6 py-3 rounded-full font-bold text-xs flex items-center justify-center space-x-2 border border-blue-400/30 shadow-lg shadow-blue-500/20 active:scale-95 transition-all text-white"
+                  >
+                    <span>Apply Now</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
                   </Link>
                 </div>
-              </div>
+              </SpotlightCard>
             ))}
           </div>
 
           {/* Fallback box */}
-          <div className="mt-12 bg-blue-50 rounded-2xl border border-blue-100 p-8 text-center">
-            <h3 className="text-xl font-bold text-slate-900 mb-2">Don't see a perfect fit?</h3>
-            <p className="text-slate-600 mb-6">We're always looking for talented individuals. Send us your resume anyway!</p>
-            <Link to="/contact" className="inline-flex items-center font-semibold text-blue-600 hover:text-blue-800">
-              Drop us a line <ArrowRight className="ml-1 h-4 w-4" />
-            </Link>
+          <div className="pt-6">
+            <SpotlightCard className="glass-card-3d rounded-3xl p-8 text-center space-y-4">
+              <h3 className={`text-xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>Don't see a perfect fit?</h3>
+              <p className={`text-xs sm:text-sm font-medium max-w-xl mx-auto ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
+                We're always looking for talented individuals who thrive in fast-paced software engineering environments. Send us your profile!
+              </p>
+              <div className="pt-2">
+                <Link
+                  to="/contact"
+                  className="inline-flex items-center space-x-1.5 font-bold text-xs text-blue-500 hover:text-blue-600 uppercase tracking-widest group"
+                >
+                  <span>Drop us a line</span>
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-200" />
+                </Link>
+              </div>
+            </SpotlightCard>
           </div>
-        </div>
-
+        </motion.div>
       </div>
     </div>
   );

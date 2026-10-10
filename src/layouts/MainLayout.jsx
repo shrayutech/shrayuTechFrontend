@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import ScrollProgress from '../components/ScrollProgress';
 import SkeletonNavbar from '../components/skeleton/SkeletonNavbar';
 import SkeletonFooter from '../components/skeleton/SkeletonFooter';
 import SkeletonWrapper from '../components/skeleton/SkeletonWrapper';
@@ -11,6 +12,7 @@ const MainLayout = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-app-main text-app-primary antialiased selection:bg-blue-600/30 selection:text-blue-200 transition-colors duration-300">
+      <ScrollProgress />
       <SkeletonWrapper loading={isLoading} skeleton={<SkeletonNavbar />}>
         <Navbar />
       </SkeletonWrapper>

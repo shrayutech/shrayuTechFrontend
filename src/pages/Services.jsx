@@ -19,6 +19,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useSkeleton } from '../context/SkeletonContext';
 import SkeletonWrapper from '../components/skeleton/SkeletonWrapper';
 import ServicesSkeleton from '../components/skeleton/ServicesSkeleton';
+import SpotlightCard from '../components/SpotlightCard';
 
 const Services = () => {
   const { isDark } = useTheme();
@@ -114,43 +115,54 @@ const Services = () => {
 
         <div className="max-w-7xl mx-auto relative z-10 space-y-20">
           {/* Header Section */}
-          <div className="text-center max-w-4xl mx-auto space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="text-center max-w-4xl mx-auto space-y-6"
+          >
             <div className="inline-flex items-center space-x-2 bg-blue-500/10 border border-blue-500/20 px-4 py-1.5 rounded-full text-blue-500 text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-sm">
               <Sparkles className="w-3.5 h-3.5" />
               <span>Engineering Capabilities</span>
             </div>
             <h1 className={`text-4xl sm:text-5xl md:text-6xl font-black tracking-tight ${isDark ? 'text-white' : 'text-slate-900'}`}>
               Our Software Development{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-indigo-500 to-cyan-500">
+              <span className="gradient-text-animated">
                 Services
               </span>
             </h1>
             <p className={`text-base sm:text-lg font-medium leading-relaxed max-w-2xl mx-auto ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>
               We deliver end-to-end software development services tailored for modern business environments, from full-stack SaaS platforms to AI backend pipelines.
             </p>
-          </div>
+          </motion.div>
 
           {/* Services Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
             {serviceCategories.map((service, idx) => (
-              <div
+              <SpotlightCard
                 key={idx}
                 className="glass-card-3d rounded-3xl p-8 flex flex-col justify-between space-y-8"
               >
                 <div className="space-y-6">
                   <div className="flex justify-between items-start">
-                    <div className={`p-4 rounded-2xl ${isDark ? 'bg-white/5 border border-white/10' : 'bg-slate-100 border border-slate-200'}`}>
+                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110 ${isDark ? 'bg-white/5 border border-white/10' : 'bg-slate-100 border border-slate-200'}`}>
                       {service.icon}
                     </div>
-                    <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border ${
-                      isDark ? 'text-blue-400 bg-blue-500/10 border-blue-500/20' : 'text-blue-700 bg-blue-50 border-blue-200'
+                    <span className={`text-[10px] font-bold uppercase tracking-widest px-3 py-1 rounded-full border transition-colors ${
+                      isDark ? 'text-blue-400 bg-blue-500/10 border-blue-500/20 group-hover:border-blue-500/40' : 'text-blue-700 bg-blue-50 border-blue-200 group-hover:border-blue-300'
                     }`}>
                       {service.tagline}
                     </span>
                   </div>
 
                   <div className="space-y-2">
-                    <h3 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{service.title}</h3>
+                    <h3 className={`text-2xl font-bold transition-colors ${isDark ? 'text-white group-hover:text-blue-400' : 'text-slate-900 group-hover:text-blue-600'}`}>{service.title}</h3>
                     <p className={`text-xs font-medium leading-relaxed ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>{service.desc}</p>
                   </div>
 
@@ -169,8 +181,8 @@ const Services = () => {
                     {service.techs.map((tech, tIdx) => (
                       <span
                         key={tIdx}
-                        className={`px-3 py-1 rounded-md font-bold text-[10px] uppercase border ${
-                          isDark ? 'bg-white/5 text-slate-300 border-white/10' : 'bg-slate-100 text-slate-700 border-slate-200'
+                        className={`px-3 py-1 rounded-md font-bold text-[10px] uppercase border transition-colors ${
+                          isDark ? 'bg-white/5 text-slate-300 border-white/10 group-hover:border-blue-500/30' : 'bg-slate-100 text-slate-700 border-slate-200 group-hover:border-blue-300'
                         }`}
                       >
                         {tech}
@@ -180,36 +192,48 @@ const Services = () => {
 
                   <Link
                     to="/contact"
-                    className="inline-flex items-center justify-between w-full pt-1 text-xs text-blue-500 font-bold hover:text-blue-600 transition-colors uppercase tracking-widest group"
+                    className="inline-flex items-center justify-between w-full pt-1 text-xs text-blue-500 font-bold hover:text-blue-600 transition-colors uppercase tracking-widest group/link"
                   >
                     <span>Consult Architectural Lead</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    <ArrowRight className="w-4 h-4 group-hover/link:translate-x-1.5 transition-transform duration-200" />
+                  </Link>
+                </div>
+              </SpotlightCard>
+            ))}
+          </motion.div>
+
+          {/* Bottom Conversion Banner */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-50px" }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="pt-8"
+          >
+            <div className="relative overflow-hidden rounded-[2rem] sm:rounded-[2.5rem] bg-gradient-to-tr from-blue-950 via-[#0B1021] to-indigo-950 border border-white/15 p-8 sm:p-12 md:p-16 text-center shadow-2xl space-y-6">
+              {/* Subtle background glow */}
+              <div className="absolute top-0 right-0 w-80 h-80 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+              <div className="absolute bottom-0 left-0 w-80 h-80 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+
+              <div className="relative z-10 space-y-4 sm:space-y-6">
+                <h2 className="cta-heading font-black tracking-tight">
+                  Need a Custom Architectural Solution?
+                </h2>
+                <p className="text-slate-200 text-sm sm:text-base md:text-lg max-w-2xl mx-auto font-medium">
+                  Our principal engineers can evaluate your current tech stack or construct a tailored greenfield project roadmap.
+                </p>
+                <div className="pt-2 sm:pt-4 flex justify-center">
+                  <Link
+                    to="/contact"
+                    className="btn-primary group text-white font-bold text-sm sm:text-base px-6 sm:px-8 py-3.5 sm:py-4 rounded-full flex items-center justify-center space-x-2 border border-blue-400/30 shadow-xl shadow-blue-500/30 active:scale-95 transition-all w-full sm:w-auto"
+                  >
+                    <span>Book Engineering Discovery Call</span>
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200 shrink-0" />
                   </Link>
                 </div>
               </div>
-            ))}
-          </div>
-
-          {/* Bottom Conversion Banner */}
-          <div className="pt-8">
-            <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-tr from-blue-900 via-[#0B1021] to-indigo-900 border border-white/15 p-12 sm:p-16 text-center shadow-2xl space-y-6">
-              <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-                Need a Custom Architectural Solution?
-              </h2>
-              <p className="text-slate-300 text-base max-w-2xl mx-auto font-medium">
-                Our principal engineers can evaluate your current tech stack or construct a tailored greenfield project roadmap.
-              </p>
-              <div className="pt-4 flex justify-center">
-                <Link
-                  to="/contact"
-                  className="btn-primary text-white font-bold text-base px-8 py-4 rounded-full flex items-center space-x-2 border border-blue-400/30 shadow-xl shadow-blue-500/30"
-                >
-                  <span>Book Engineering Discovery Call</span>
-                  <ArrowRight className="w-5 h-5" />
-                </Link>
-              </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </SkeletonWrapper>

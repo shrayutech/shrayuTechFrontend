@@ -34,15 +34,14 @@
         "description": "Leading software development company providing premium web design, mobile apps, and enterprise solutions.",
         "address": {
           "@type": "PostalAddress",
-          "streetAddress": "123 Tech Boulevard",
-          "addressLocality": "Innovation District",
-          "addressRegion": "CA",
-          "postalCode": "94043",
-          "addressCountry": "US"
+          "addressLocality": "Chhatrapati Sambhajinagar",
+          "addressRegion": "Maharashtra",
+          "postalCode": "431001",
+          "addressCountry": "IN"
         },
         "contactPoint": {
           "@type": "ContactPoint",
-          "telephone": "+91-702004614",
+          "telephone": "+91-7020041614",
           "contactType": "customer service",
           "email": "shrayutech@gmail.com",
           "availableLanguage": ["English", "Hindi"]
@@ -53,9 +52,23 @@
       }
     </script>
     <title>Shrayu Technologies | Premium Software Development &amp; Custom Web Design</title>
+    <!-- Early Theme Initialization to Prevent Flash of Wrong Theme (FOUC) -->
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('shrayu_theme');
+          var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var theme = (saved === 'light' || saved === 'dark') ? saved : (prefersDark ? 'dark' : 'light');
+          document.documentElement.classList.remove('light', 'dark');
+          document.documentElement.classList.add(theme);
+          document.documentElement.setAttribute('data-theme', theme);
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
-    <div id="root">
+    <div id="root"></div>
+    <noscript>
       <!-- SEO Fallback Content for Crawlers without JavaScript -->
       <header>
         <img src="/logo.png" alt="Shrayu Technologies Logo - Custom Software Development &amp; Web Design" width="200" height="60" />
@@ -101,7 +114,7 @@
           </ul>
         </section>
       </main>
-    </div>
+    </noscript>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
