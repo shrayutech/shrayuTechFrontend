@@ -13,9 +13,7 @@ import {
   Terminal,
   Search,
   ArrowUpRight,
-  FolderGit2,
   Code2,
-  CheckCircle2,
   RotateCcw
 } from 'lucide-react';
 import SEO from '../components/SEO';
@@ -181,36 +179,6 @@ const Products = () => {
               Machine Learning, Python automation, and Full-Stack engineering,
               architected with clean modular code and published open-source.
             </p>
-
-            {/* Profile Pill & Stats Row */}
-            <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-              <a
-                href="https://github.com/Saru2248?tab=repositories"
-                target="_blank"
-                rel="noreferrer"
-                className={`inline-flex items-center space-x-2 px-4 py-2 rounded-full text-xs font-bold border transition-all duration-200 hover:-translate-y-0.5 shadow-sm ${
-                  isDark
-                    ? 'bg-slate-900/80 border-slate-700 text-slate-200 hover:text-white hover:border-blue-500/50 hover:bg-slate-800'
-                    : 'bg-white border-slate-300 text-slate-700 hover:text-blue-600 hover:border-blue-400 hover:bg-slate-50'
-                }`}
-                title="View GitHub Repositories"
-              >
-                <FolderGit2 className="w-4 h-4 text-blue-500" />
-                <span>github.com/Saru2248</span>
-                <ArrowUpRight className="w-3.5 h-3.5 opacity-70" />
-              </a>
-
-              <div
-                className={`inline-flex items-center space-x-2 px-3.5 py-2 rounded-full text-xs font-semibold border ${
-                  isDark
-                    ? 'bg-white/5 border-white/10 text-slate-300'
-                    : 'bg-slate-100 border-slate-200 text-slate-700'
-                }`}
-              >
-                <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
-                <span>25 Matched Repositories</span>
-              </div>
-            </div>
           </motion.div>
 
           {/* ========================================================= */}
